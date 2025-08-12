@@ -1,0 +1,22 @@
+digraph {
+	"μ_coef" [label="μ_coef" fillcolor=white shape=ellipse style=filled]
+	"σ_coef" [label="σ_coef" fillcolor=white shape=ellipse style=filled]
+	noise [label=noise fillcolor=white shape=ellipse style=filled]
+	obs [label=obs fillcolor=grey shape=ellipse style=filled]
+	subgraph cluster_plate_targets {
+		label=plate_targets labeljust=r labelloc=b
+		coef [label=coef fillcolor=white shape=ellipse style=filled]
+		subgraph cluster_plate_features {
+			label=plate_features labeljust=r labelloc=b
+			coef [label=coef fillcolor=white shape=ellipse style=filled]
+			subgraph cluster_plate_Indv {
+				label=plate_Indv labeljust=r labelloc=b
+				coef [label=coef fillcolor=white shape=ellipse style=filled]
+			}
+		}
+	}
+	"μ_coef" -> coef
+	"σ_coef" -> coef
+	coef -> obs
+	noise -> obs
+}

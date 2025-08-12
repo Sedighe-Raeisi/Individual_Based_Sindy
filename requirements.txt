@@ -1,0 +1,10 @@
+jax==0.6.2
+matplotlib==3.10.5
+numpy==2.3.2
+numpyro==0.18.0
+pandas==2.3.1
+pysindy==1.7.5
+scikit_learn==1.7.1
+scipy==1.16.1
+seaborn==0.13.2
+torch==2.7.1

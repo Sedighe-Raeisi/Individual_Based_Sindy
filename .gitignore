@@ -1,0 +1,13 @@
+# Ignore all files in a folders:
+src/Dynamical_systems_utils/Cognetive_RL/Daniel_Code
+examples/Cognetive_RL/Result
+examples/Damped_Forced_Harmonic_Oscillator/data_history
+examples/Fitz_Hugh_Nagumo/RUN_RESULTS
+examples/RLC/Result
+# Ignore all files with a .log extension
+*.log
+*.pkl
+*.npz
+*.xml
+*.ml
+
