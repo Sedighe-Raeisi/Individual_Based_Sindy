@@ -18,9 +18,9 @@ def run_svi(x,y,model, beta_names=None):
 
 def svi_result_compare(X_data, Y_data, model, eqs, coef_names, gt_coef,scaler = None):
   svi_samples = run_svi(model=model, x=X_data, y=Y_data)
-
-  N_Eqs = svi_samples['coef_auto_loc'].shape[2]
-  N_Coef = svi_samples['coef_auto_loc'].shape[1]
+  # print("svi_samples.shape",svi_samples['coef_auto_loc'].shape)
+  N_Eqs = svi_samples['coef_auto_loc'].shape[1]
+  N_Coef = svi_samples['coef_auto_loc'].shape[0]
   if scaler is not None:
       svi_coef_result = scaler.reverse_coef(svi_samples['coef_auto_loc'],method='svi')
   else:
@@ -32,8 +32,8 @@ def svi_result_compare(X_data, Y_data, model, eqs, coef_names, gt_coef,scaler = 
       mean_est_1eq = []
       std_est_1eq = []
       for coef_i in range(N_Coef):
-        est_mean = np.mean(svi_coef_result[:, coef_i, eq_j])
-        est_std = np.std(svi_coef_result[:, coef_i, eq_j])
+        est_mean = np.mean(svi_coef_result[ coef_i, eq_j])
+        est_std = np.std(svi_coef_result[ coef_i, eq_j])
         mean_est_1eq += [est_mean]
         std_est_1eq += [est_std]
       mean_est_list += [mean_est_1eq]
@@ -47,8 +47,8 @@ def svi_result_compare(X_data, Y_data, model, eqs, coef_names, gt_coef,scaler = 
   # gt_coef = [{'constant':[0,0],'x':[0,0],'v':[1,0],'cos(omega*t)':[0,0],'x**2':[0,0],'v**2':[0,0],'x*v':[0,0]},
   #           {'constant':[0,0],'x':[true_params['-k/m_mean'],true_params['-k/m_std']],'v':[true_params['-c/m_mean'],true_params['-c/m_std']],'cos(omega*t)':[true_params['F0/m_mean'],true_params['F0/m_std']],'x**2':[0,0],'v**2':[0,0],'x*v':[0,0]}]
   print(f"the shape of svi ouput samples : {svi_samples['coef_auto_loc'].shape}")
-  N_Eqs = svi_coef_result.shape[2]
-  N_Coef = svi_coef_result.shape[1]
+  N_Eqs = svi_coef_result.shape[1]
+  N_Coef = svi_coef_result.shape[0]
   print("------------------ SVI Results----------------------")
 
   for eq_j in range(N_Eqs):
