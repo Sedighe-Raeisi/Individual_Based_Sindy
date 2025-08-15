@@ -59,6 +59,7 @@ def run_mcmc(system_param_dict ,
             X_data, Y_data, true_params = mix_data(system_param_dict)
         else:
             true_params_filename = os.path.join(BH_chk_path, f"chk_GT_Data.pkl")
+            print(true_params_filename)
             with open(true_params_filename, 'rb') as f:
                 X_data, Y_data, true_params = pickle.load(f)
 
@@ -77,11 +78,12 @@ def run_mcmc(system_param_dict ,
         print("Shape of Y_data:", Y_data.shape)
         print("True parameters keys:", true_params.keys())
         ############################## if we need scaling #########################
+        X_data, Y_data = pre_Flat(X_data, Y_data)
         if scaler is not None:
             scaler = BH_scaler(X_data)
             X_data = scaler.scale(X_data)
 
-        X_data, Y_data = pre_Flat(X_data, Y_data)
+
         if display_svi:
 
             ################## RUN SVI #####################################
@@ -155,11 +157,11 @@ def run_mcmc(system_param_dict ,
             pickled_mcmc = pickle.load(f)
 
         pickled_mcmc.post_warmup_state = pickled_mcmc.last_state
-
+        X_data, Y_data = pre_Flat(X_data, Y_data)
         if scaler is not None:
             scaler = BH_scaler(X_data)
             X_data = scaler.scale(X_data)
-        X_data, Y_data = pre_Flat(X_data, Y_data)
+
         pickled_mcmc.run(jax.random.PRNGKey(1), X_data, Y_data)
 
         mcmc_samples = pickled_mcmc.get_samples()
@@ -213,11 +215,14 @@ class BH_scaler:
         # Calculate mean and std across observations for each feature
         self.mean = np.mean(to_scale_X, axis=1, keepdims=True)
         self.std = np.std(to_scale_X, axis=1, keepdims=True)
+        print("mean.shape",self.mean.shape)
+        print("to_scale_X.shape",to_scale_X.shape)
         scaled_X = (to_scale_X - self.mean) / self.std
-
+        print("scaled_X.shape",scaled_X.shape)
         # Reconstruct the scaled data with the constant term
         n_obs = X.shape[1]
         Theta_constant_term = np.ones((1, n_obs))
+        print("Theta_constant_term.shape",Theta_constant_term.shape)
         scaled_X = np.concatenate((Theta_constant_term, scaled_X), axis=0)
 
         return scaled_X

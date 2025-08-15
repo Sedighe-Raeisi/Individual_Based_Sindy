@@ -50,8 +50,8 @@ def plt_mcmc(gt_save_path,est_save_path, gt_utils,realparame2gtarray, generate_p
     if complex_pdf == False:
         gt_info_arr = gt_dict['gt_info_arr']
         pdf_samples = generate_pdf(gt_info_arr)
-    else:
-        pdf_samples = generate_pdf(gt_save_path)
+    # else:
+    #     pdf_samples = generate_pdf(gt_save_path)
 ################### parameters of plot defining  #########################
     N_Eqs = est_coef_array.shape[2]
     N_Coef = est_coef_array.shape[1]
@@ -101,6 +101,12 @@ def plt_mcmc(gt_save_path,est_save_path, gt_utils,realparame2gtarray, generate_p
                 if true_params:
                     sns.histplot(gt_coef_array[EQ_ID, coef_i, :], kde=True, ax=axi, color='green', alpha=0.3,
                                  stat="density")
+
+            max_y_limit = .98  # A good starting value, adjust as needed
+            axi.set_ylim(0, max_y_limit)
+            # if axi.get_ylim()[1] > max_y_limit:
+            #     axi.set_ylim(0, max_y_limit)
+
             est_mean = round(np.mean(est_coef_mean_arr[coef_i, EQ_ID]), 2)
             est_std = round(np.std(est_coef_mean_arr[coef_i, EQ_ID]), 2)
             if true_params:

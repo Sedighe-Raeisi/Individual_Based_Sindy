@@ -1,19 +1,12 @@
+import os.path
 import os
 os.environ['PYTHONUNBUFFERED'] = '1'
 os.environ["XLA_FLAGS"] = "--xla_force_host_platform_device_count=64"
-import os.path
 
-# Assuming src.model and src.mcmc_utils are still relevant and compatible
-# with the new data structure (X_all, Y_all, real_params from mix_data)
-from src.model import MultiTargetMultiEquation_HSModel # Still using this model
-from src.mcmc_utils import run_mcmc # Still using this utility
-from src.plot import plt_mcmc
+from src.model import Flat_HSModel
+from src.flat_mcmc_utils import run_mcmc
 from src.Dynamical_systems_utils.FitzHughNagumo import mix_data,gt_utils,realparame2gtarray, generate_pdf
-import pickle
-import os
-from src.plot import plt_mcmc, row_result
-import numpy as np
-
+from src.flat_plot import plt_mcmc
 print("---------------------- parameter defining ------------------------")
 NUM_WARMUP = 1000
 NUM_CHAINS = 4
@@ -21,7 +14,7 @@ NUM_SAMPLES = 1000
 NUM_BATCH_SAMPLES = 5
 root_path = "." # os.getcwd()
 save_dir_prefix = "FHN_chk_" # Changed prefix for FitzHugh-Nagumo checkpoints
-model = MultiTargetMultiEquation_HSModel # The model should be general enough for different systems
+model = Flat_HSModel # The model should be general enough for different systems
 
 # --- FitzHugh-Nagumo Parameters ---
 # As per your request: b0=2.0; b1=2.0; a=0.5 and I=1.5
@@ -53,7 +46,7 @@ system_param_dict = {"N_param_set":N_param_set,
     "t_info": t_info,
     "noise_info": noise_info
 }
-mode = "row_plot" # or "run"
+mode = "run" # or "run"
 print(f"--------------------------- mode = {mode} --------------------------------")
 if mode == "run":
     print("----------------------- run mcmc_utils -----------------------")
@@ -62,22 +55,14 @@ if mode == "run":
                  root_path = root_path, save_dir_prefix = save_dir_prefix,
                  program_state = "start", model = model,
                  display_svi = True, mix_data = mix_data, gt_utils = gt_utils)
-elif mode == "row_plot":
-    to_plot = [[1,0],[1,1]]
-
-    true_params_file_str = f"chk_GT_Data.pkl"
-    save_path = os.path.join(root_path, [file for file in os.listdir(root_path) if file.startswith(save_dir_prefix)][0])
-    plot_dict  = {"est_color":"blue", "gt_color":"pink","legend":None,"xlabel_fontsize":None,"title_fontsize":None}
-    row_result(save_path, gt_utils, realparame2gtarray, true_params_file_str,
-               fighigth=4,figwidth = 16,
-               n_rows=1, n_cols=2,
-               scaler=None, to_plot=to_plot, plot_dict=plot_dict)
 
 elif mode=="plot":
 
-    true_params_file_str = f"chk_GT_Data.pkl"
-    save_path = os.path.join(root_path, [file for file in os.listdir(root_path) if file.startswith(save_dir_prefix)][0])
 
-    plt_mcmc(save_path, gt_utils, realparame2gtarray, generate_pdf, true_params_file_str,
-             stop_subplot_n=None, figlength=3,
-             complex_pdf=False, x_range=None, scaler=None)
+    true_params_file_str = f"chk_GT_Data.pkl"
+    gt_save_path = os.path.join(root_path, [file for file in os.listdir(root_path) if file.startswith(save_dir_prefix)][0])
+    est_save_path = os.path.join(root_path, [file for file in os.listdir(root_path) if file.startswith('Flat_'+save_dir_prefix)][0])
+
+    plt_mcmc(gt_save_path,est_save_path, gt_utils, realparame2gtarray, generate_pdf, true_params_file_str,
+                 stop_subplot_n=None, figlength=3,
+                 complex_pdf=True, x_range=None, scaler=None)
