@@ -364,3 +364,183 @@ def plot_check_stationary(chk_path,gt_utils):
     plt.tight_layout()
     plt.savefig(os.path.join(chk_path, 'stationary_plot.jpg'))
     plt.show()
+
+################## row plot ######################
+
+import pickle
+import os
+import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
+import numpy as np
+import matplotlib as mpl
+from matplotlib import gridspec
+
+import pickle
+import os
+import matplotlib.pyplot as plt
+import seaborn as sns
+import numpy as np
+import matplotlib as mpl
+from matplotlib import gridspec
+
+
+def row_result(save_path, gt_utils, realparame2gtarray, true_params_file_str,
+               fighigth=3, figwidth=12, n_rows=None, n_cols=None,
+               scaler=None, to_plot=None, plot_dict=dict()):
+    legend_True = True if plot_dict is not None and plot_dict.get('legend') else None
+    xlabel_fontsize = plot_dict.get('xlabel_fontsize', None)
+    title_fontsize = plot_dict.get('title_fontsize', None)
+    est_color = plot_dict.get('est_color', 'blue')
+    gt_color = plot_dict.get('gt_color', 'pink')
+
+    ############################## Load GT Data ###########################
+    true_params_filename = os.path.join(save_path, true_params_file_str)
+    with open(true_params_filename, 'rb') as f:
+        X_data, Y_data, true_params = pickle.load(f)
+
+    gt_coef_array = realparame2gtarray(true_params)
+    gt_dict = gt_utils(true_params)
+    eqs = gt_dict['eqs']
+    coef_names = gt_dict['coef_names']
+
+    ########################## Load EST data #############################
+    if scaler is None:
+        npz_sample_path = os.path.join(save_path, "mcmc_samples.npz")
+        loaded_samples = np.load(npz_sample_path, allow_pickle=True)
+        est_coef = loaded_samples['coef']
+        est_coef_array = np.array(est_coef)
+    else:
+        with open(os.path.join(save_path, f'revert_mcmc_samples.pkl'), 'rb') as f:
+            mcmc_coef_results = pickle.load(f)
+            est_coef_array = np.array(mcmc_coef_results)
+
+    ################### Prepare plot data and table data ##################
+    N_Eqs = est_coef_array.shape[3]
+    N_Coef = est_coef_array.shape[2]
+    est_coef_mean_arr = np.mean(est_coef_array, axis=0)
+
+    mpl.rcParams['xtick.labelsize'] = 6
+
+    # KEY CHANGE: Create a GridSpec with 2*n_rows for titles and plots
+
+    # gs = gridspec.GridSpec(2 * n_rows, n_cols + 1, width_ratios=[1] * n_cols + [0.5],
+    #                        height_ratios=[0.1] + [1] + ([0.1, 1] * (n_rows - 1)))
+    # fig = plt.figure(figsize=(figwidth, fighigth * n_rows))
+
+    missed_coef_data = []
+
+    # Identify missed coefficients and calculate their values for the table
+    for eq_i in range(N_Eqs):
+        for coef_i in range(N_Coef):
+            if [eq_i, coef_i] not in to_plot:
+                est_mean = np.mean(est_coef_mean_arr[:, coef_i, eq_i])
+                est_std = np.std(est_coef_mean_arr[:, coef_i, eq_i])
+                gt_mean = np.mean(gt_coef_array[eq_i, coef_i, :])
+                gt_std = np.std(gt_coef_array[eq_i, coef_i, :])
+                missed_coef_data.append([
+                    f'{eqs[eq_i].split("=")[0]} : {coef_names[coef_i]}',
+                    f'{est_mean:.3f}', f'{est_std:.3f}',
+                    f'{gt_mean:.3f}', f'{gt_std:.3f}'
+                ])
+
+    ploted_eqs = []
+    plot_counter = 0
+    used_axes = []
+    fig = plt.figure(layout="constrained",figsize=(figwidth,fighigth))
+    # Loop to create and populate the subplots for the specified indices
+    for index in to_plot:
+        row_plot_idx = plot_counter // n_cols
+        col = plot_counter % n_cols
+
+        # Add a row title if it's a new row
+        if index[0] not in ploted_eqs:
+            # title_ax = fig.add_subplot(gs[1 * row_plot_idx, 0:n_cols])
+            # title_ax.set_title(f'{eqs[index[0]]}', fontsize=12, fontweight='bold')
+            # title_ax.axis('off')
+            ploted_eqs.append(index[0])
+
+        # Plot in the dedicated subplot row
+        # axi = fig.add_subplot(gs[1 * row_plot_idx + 1, col])
+        axi = plt.subplot2grid((n_rows, n_cols + 1),(row_plot_idx,col),colspan=1,fig=fig)
+        # used_axes.append(axi)
+
+        try:
+            sns.kdeplot(est_coef_mean_arr[:, index[1], index[0]], ax=axi, fill=True, color=est_color, alpha=.4,
+                        warn_singular=False, linewidth=3)
+            if true_params:
+                sns.kdeplot(gt_coef_array[index[0], index[1], :], ax=axi, fill=True, color=gt_color, alpha=.4,
+                            warn_singular=False, linewidth=1)
+        except:
+            sns.kdeplot(est_coef_mean_arr[:, index[1], index[0]], ax=axi, fill=True, color=est_color, alpha=.4,
+                        warn_singular=False, linewidth=3)
+            if true_params:
+                sns.kdeplot(gt_coef_array[index[0], index[1], :], ax=axi, fill=True, color=gt_color, alpha=.2,
+                            warn_singular=False, linewidth=1)
+
+        est_mean = np.mean(est_coef_mean_arr[:, index[1], index[0]])
+        est_std = np.std(est_coef_mean_arr[:, index[1], index[0]])
+        if true_params:
+            gt_mean = np.mean(gt_coef_array[index[0], index[1], :])
+            gt_std = np.std(gt_coef_array[index[0], index[1], :])
+
+        axi.axvline(est_mean, color=est_color, linestyle='--', label=f'est_mean = {est_mean:.3f}')
+        if true_params:
+            axi.axvline(gt_mean, color=gt_color, linestyle='--', label=f'gt_mean = {gt_mean:.3f}')
+
+        axi.set_xlabel(f"{eqs[eq_i]}\ncoef : {coef_names[index[1]]}", fontsize=xlabel_fontsize)
+        axi.set_ylabel(" ", fontsize=xlabel_fontsize)
+        axi.xaxis.set_major_locator(plt.MaxNLocator(3))
+        axi.set_yticks(np.array([0]))
+        axi.set_yticklabels([""], fontsize=12, rotation=90)
+        axi.yaxis.set_tick_params(length=0)
+        axi.spines['left'].set_visible(False)
+        axi.spines['top'].set_visible(False)
+        axi.spines['right'].set_visible(False)
+        if legend_True:
+            axi.legend(loc='upper center', bbox_to_anchor=(0.5, 1.03), ncol=1, fancybox=True, shadow=True, fontsize=8)
+
+        plot_counter += 1
+
+    # Hide unused subplots
+    for i in range(plot_counter, n_rows * n_cols):
+        row = i // n_cols
+        col = i % n_cols
+        print(row,col)
+        axi = plt.subplot2grid((n_rows, n_cols + 1), (row, col), colspan=1,fig=fig)
+        axi.axis('off')
+
+    # Add the table to the last column, spanning all 2*n_rows
+    ax_table = plt.subplot2grid((n_rows, n_cols + 1), (0, n_cols), colspan=1, rowspan=n_rows,fig=fig)
+    ax_table.axis('off')
+
+    if missed_coef_data:
+        # Define table headers
+        headers = ['Eq. : Coef.', 'Est.\nMean', 'Est.\nStd', 'GT\nMean', 'GT\nStd']
+
+        # Create the table
+        col_widths = [0.4, 0.15, 0.15, 0.15, 0.15]
+        table = ax_table.table(cellText=missed_coef_data,
+                               colLabels=headers,
+                               loc='center',
+                               cellLoc='center',
+                               colWidths=col_widths)
+
+        for i in range(len(missed_coef_data) + 1):
+            for j in range(len(headers)):
+                cell = table.get_celld()[(i, j)]
+                if i == 0 or j == 0:
+                    cell.set_facecolor('grey')
+                else:
+                    cell.set_facecolor('white')
+
+        table.auto_set_font_size(False)
+        table.set_fontsize(6)
+        table.scale(1, 1.5)
+        ax_table.set_title('Other Coefficients', fontsize=12)
+
+    # Use tight_layout to handle spacing between GridSpec cells
+    plt.tight_layout()
+    plt.savefig(os.path.join(save_path, 'row_kde_plot_with_table.jpg'))
+    plt.show()
+    print("plot run finished")
