@@ -70,6 +70,7 @@ $$
 Q_A[t]=Q_A[t-1]+\alpha(Action)(R-Q_A[t-1])+\gamma(1-Action)(Q0-Q_A[t-1])
 $$
 
+![row_kde_plot_with_table.jpg](examples/Cognetive_RL/CRL_chk_20250812_1556/row_kde_plot_with_table.jpg)
 ### Damped Forced Harmonic Oscillator
 
 As a second use case, we applied this method to data from a damped forced harmonic oscillator, governed by the equations:
@@ -84,6 +85,7 @@ $$
 
 The model was able to recover different structures per individual, even when the force was zero for some. This was achieved by recovering multimodal distributions for the corresponding coefficients.
 
+![row_kde_plot_with_table.jpg](examples/Damped_Forced_Harmonic_Oscillator/DFHO_chk_20250808_1320/row_kde_plot_with_table.jpg)
 ### Fitz Hugh–Nagumo Model
 
 We also implemented this method on data governed by the Fitz Hugh–Nagumo model. This system is a classic example studied by SINDy.
@@ -95,7 +97,8 @@ $$
 $$
 \dot{w}=a b_0 + a b_1 v-a w
 $$
-
+  
+![row_kde_plot_with_table.jpg](examples/Fitz_Hugh_Nagumo/FHN_chk_20250808_1320/row_kde_plot_with_table.jpg)
 ### Lotka Volterra
 
 As another application, we used this approach to recover the dynamics of a predator-prey system with more than one prey or predator species.
@@ -108,7 +111,7 @@ $$
 \dot{Y}=\delta XY -\gamma Y
 $$
 
-
+![row_kde_plot_with_table.jpg](examples/Lotka_Volterra/LV_chk_20250812_1022/row_kde_plot_with_table.jpg)
 ---  
 
 ### RLC Circuit
@@ -124,6 +127,7 @@ $$
 
 This section demonstrates the method's ability to accurately identify the governing equations for an electrical system.
 
+![row_kde_plot_with_table.jpg](examples/RLC/RLC_chk_20250812_0922/row_kde_plot_with_table.jpg)
 ## Conclusions
 
 In this research, we provided an approach for data-driven model discovery that accounts for individual differences in governing models. We applied the method to various systems, and the results show that it is capable of recovering not just the mean and standard deviation of coefficient distributions but also their shapes. This enables us to find non-shared or multi-modal structures within a population of individuals. Our approach empowers scientists to build models that can explain differences among individuals.
