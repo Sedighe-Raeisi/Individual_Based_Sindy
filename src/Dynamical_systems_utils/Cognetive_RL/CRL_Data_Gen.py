@@ -205,7 +205,7 @@ def mix_data(system_param_dict,n_trials_per_session = None, n_sessions = None,
 
 
 def gt_utils(real_params):
-    eqs = ["QA_t = QA_[t-1]+Action*Alpha*(R_QA[t-1])+(1-Action)*ForgetRate*(Q0-QA[t-1])"]
+    eqs = ["QA_t = QA_[t-1]+Action*α*(R_QA[t-1])+(1-Action)*γ*(Q0-QA[t-1])"]
     coef_names = ['QA_1','ActionA*(R-QA_1)','(1-ActionA)*(QA0-QA_1)','QA_1**2','QB_1','QA_1*QB_1'] # Updated coef_names for RLC
 
     gt_coef = [{'QA_1': [1, 0],
