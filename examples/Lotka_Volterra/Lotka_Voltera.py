@@ -6,7 +6,7 @@ os.environ["XLA_FLAGS"] = "--xla_force_host_platform_device_count=64"
 # with the new data structure (X_all, Y_all, real_params from mix_data)
 from src.model import MultiTargetMultiEquation_HSModel # Still using this model
 from src.mcmc_utils import run_mcmc # Still using this utility
-from src.plot import plt_mcmc
+from src.plot import plt_mcmc, row_result
 # from src.dynamical_systems.FitzHughNagumo import mix_data,gt_utils,realparame2gtarray, generate_pdf
 from src.Dynamical_systems_utils.Lotka_Voltera import mix_data_lotka_volterra, gt_utils, realparame2gtarray, generate_pdf # Import LotkaVolterra functions
 import pickle
@@ -45,7 +45,7 @@ system_param_dict = {"N_param_set":N_param_set,
     "t_info":{},
     "noise_info": {}
 }
-mode = "run"#"run" # or "plot"
+mode = "row_plot"#"run" # or "plot" or "row_plot"
 print(f"--------------------------- mode = {mode} --------------------------------")
 if mode == "run":
     print("----------------------- run mcmc_utils -----------------------")
@@ -54,6 +54,16 @@ if mode == "run":
                  root_path = root_path, save_dir_prefix = save_dir_prefix,
                  program_state = "start", model = model,
                  display_svi = True, mix_data = mix_data_lotka_volterra, gt_utils = gt_utils,scaler="scale") # Use LotkaVolterra mix_data
+elif mode == "row_plot":
+    to_plot = [[0,1],[0,3],[1,2],[1,3]]
+
+    true_params_file_str = f"chk_GT_Data.pkl"
+    save_path = os.path.join(root_path, [file for file in os.listdir(root_path) if file.startswith(save_dir_prefix)][0])
+    plot_dict = {"est_color": "blue", "gt_color": "green", "legend": None, "xlabel_fontsize": 8, "title_fontsize": None}
+    row_result(save_path, gt_utils, realparame2gtarray, true_params_file_str,
+               fighigth=4, figwidth=18,
+               n_rows=2, n_cols=2,
+               scaler="scale", to_plot=to_plot, plot_dict=plot_dict)
 elif mode=="plot":
 
     true_params_file_str = f"chk_GT_Data.pkl" # Updated filename

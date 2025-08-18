@@ -412,10 +412,12 @@ def row_result(save_path, gt_utils, realparame2gtarray, true_params_file_str,
         est_coef_array = np.array(est_coef)
     else:
         with open(os.path.join(save_path, f'revert_mcmc_samples.pkl'), 'rb') as f:
+            print(f" start loading samples from {os.path.join(save_path, f'revert_mcmc_samples.pkl')}")
             mcmc_coef_results = pickle.load(f)
             est_coef_array = np.array(mcmc_coef_results)
 
     ################### Prepare plot data and table data ##################
+    print(f"est_coef_array.shape = {est_coef_array.shape}")
     N_Eqs = est_coef_array.shape[3]
     N_Coef = est_coef_array.shape[2]
     est_coef_mean_arr = np.mean(est_coef_array, axis=0)
@@ -433,15 +435,19 @@ def row_result(save_path, gt_utils, realparame2gtarray, true_params_file_str,
     # Identify missed coefficients and calculate their values for the table
     for eq_i in range(N_Eqs):
         for coef_i in range(N_Coef):
+            # print(f"plot index = {[eq_i, coef_i]}")
             if [eq_i, coef_i] not in to_plot:
+                print(f"not in plot index = {[eq_i, coef_i]}")
                 est_mean = np.mean(est_coef_mean_arr[:, coef_i, eq_i])
                 est_std = np.std(est_coef_mean_arr[:, coef_i, eq_i])
                 gt_mean = np.mean(gt_coef_array[eq_i, coef_i, :])
                 gt_std = np.std(gt_coef_array[eq_i, coef_i, :])
                 missed_coef_data.append([
                     f'{eqs[eq_i].split("=")[0]} : {coef_names[coef_i]}',
-                    f'{est_mean:.3f}', f'{est_std:.3f}',
-                    f'{gt_mean:.3f}', f'{gt_std:.3f}'
+                    f'{gt_mean:.3f}', f'{est_mean:.3f}',
+                    f'{gt_std:.3f}', f'{est_std:.3f}'
+                    # f'{est_mean:.3f}', f'{est_std:.3f}',
+                    # f'{gt_mean:.3f}', f'{gt_std:.3f}'
                 ])
 
     ploted_eqs = []
@@ -516,8 +522,8 @@ def row_result(save_path, gt_utils, realparame2gtarray, true_params_file_str,
 
     if missed_coef_data:
         # Define table headers
-        headers = ['Eq. : Coef.', 'Est.\nMean', 'Est.\nStd', 'GT\nMean', 'GT\nStd']
-
+        # headers = ['Eq. : Coef.', 'Est.\nMean', 'Est.\nStd', 'GT\nMean', 'GT\nStd']
+        headers = ['Eq. : Coef.', 'GT\nMean', 'Est.\nMean', 'GT\nStd', 'Est.\nStd']
         # Create the table
         col_widths = [0.4, 0.15, 0.15, 0.15, 0.15]
         table = ax_table.table(cellText=missed_coef_data,

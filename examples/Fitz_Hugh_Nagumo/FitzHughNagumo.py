@@ -53,7 +53,7 @@ system_param_dict = {"N_param_set":N_param_set,
     "t_info": t_info,
     "noise_info": noise_info
 }
-mode = "row_plot" # or "run"
+mode = "row_plot" # or "run" or "plot"
 print(f"--------------------------- mode = {mode} --------------------------------")
 if mode == "run":
     print("----------------------- run mcmc_utils -----------------------")
@@ -67,9 +67,9 @@ elif mode == "row_plot":
 
     true_params_file_str = f"chk_GT_Data.pkl"
     save_path = os.path.join(root_path, [file for file in os.listdir(root_path) if file.startswith(save_dir_prefix)][0])
-    plot_dict  = {"est_color":"blue", "gt_color":"pink","legend":None,"xlabel_fontsize":None,"title_fontsize":None}
+    plot_dict = {"est_color": "blue", "gt_color": "green", "legend": None, "xlabel_fontsize": 8, "title_fontsize": None}
     row_result(save_path, gt_utils, realparame2gtarray, true_params_file_str,
-               fighigth=4,figwidth = 16,
+               fighigth=4, figwidth=18,
                n_rows=1, n_cols=2,
                scaler=None, to_plot=to_plot, plot_dict=plot_dict)
 
