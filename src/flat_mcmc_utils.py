@@ -4,7 +4,7 @@ from numpyro.infer import MCMC, NUTS
 import time
 import pickle
 import os
-from src.svi_utils import svi_result_compare
+from src.flat_svi_utils import svi_result_compare
 from sklearn.preprocessing import StandardScaler
 from src.model import pre_Flat
 os.environ["JAX_TRACEBACK_FILTERING"] = "off"
