@@ -1,3 +1,5 @@
+import os.path
+
 import numpy as np
 import time
 from typing import Callable
@@ -233,5 +235,38 @@ def realparame2gtarray(real_params:dict):
     eqs = np.array([eq1_coef])
     return eqs
 
-def generate_pdf(save_path, pdf_smaple_N=10000, epsilon = 0.001 ):
-    pass
+def generate_pdf(save_path, pdf_smaple_N=10000, epsilon = 0.01 ):
+    sys_param_path = os.path.join(save_path,"system_param_dict.pkl")
+    with open(sys_param_path,"rb")as f:
+        system_param_dict = pickle.load(f)
+
+    Alpha_mean = system_param_dict['Alpha_info']["Alpha_mean"] if "Alpha_mean" in list(system_param_dict["Alpha_info"].keys()) else None
+    Alpha_std = system_param_dict['Alpha_info']["Alpha_std"] if "Alpha_std" in list(system_param_dict["Alpha_info"].keys()) else None
+
+
+    ForgetRate_mean = system_param_dict['ForgetRate_info']["ForgetRate_mean"] if "ForgetRate_mean" in list(system_param_dict["ForgetRate_info"].keys()) else None
+    ForgetRate_std = system_param_dict['ForgetRate_info']["ForgetRate_std"] if "ForgetRate_std" in list(system_param_dict["ForgetRate_info"].keys()) else None
+
+
+    data_i = 0
+    alpha_list = []
+    fr_list = []
+    Alpha_gen = gen_param(N_param = pdf_smaple_N,a_mean = Alpha_mean, a_std = Alpha_std)
+    FR_gen = gen_param(N_param = pdf_smaple_N, a_mean = ForgetRate_mean, a_std = ForgetRate_std)
+    for param_set in range(pdf_smaple_N):
+        alpha = math.fabs(Alpha_gen.gen())
+        forget_rate = math.fabs(FR_gen.gen())
+        alpha_list.append(alpha)
+        fr_list.append(forget_rate)
+        data_i += 1
+
+    coef_list = [[np.abs(np.random.normal(1, epsilon, pdf_smaple_N)),  # const
+                   np.array(alpha_list),  #
+                   np.array(fr_list),  #
+                   np.abs(np.random.normal(0, epsilon, pdf_smaple_N)),  #
+                   np.abs(np.random.normal(0, epsilon, pdf_smaple_N)),  #
+                   np.abs(np.random.normal(0, epsilon, pdf_smaple_N))]]
+    return np.array(coef_list)
+
+
+
