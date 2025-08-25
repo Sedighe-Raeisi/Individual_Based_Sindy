@@ -17,7 +17,7 @@ from scipy.stats import gaussian_kde
     # (gt, BH, Flat_B)
     # with or without table?
 
-def Custom_plot(ground_truth = True, HB_Est = True, FlatB_Est = True,TABLE = False, gt_utils=None, realparame2gtarray=None, save_dir_prefix=None,
+def Custom_plot(generate_pdf, ground_truth = True, HB_Est = True, FlatB_Est = True,pdf_state = True, TABLE = False, gt_utils=None, realparame2gtarray=None, save_dir_prefix=None,
                fighigth=3, figwidth=12, n_rows=None, n_cols=None,
                scaler=None, to_plot=None, plot_dict=dict()):
     if TABLE:
@@ -35,7 +35,14 @@ def Custom_plot(ground_truth = True, HB_Est = True, FlatB_Est = True,TABLE = Fal
     est_color = plot_dict.get('est_color', 'blue')
     gt_color = plot_dict.get('gt_color', 'pink')
     flat_color = plot_dict.get('flat_color', 'grey')
+    pdf_color = plot_dict.get("pdf_color","red")
+    pdf_fill = plot_dict.get("pdf_fill",False)
+    pdf_line_width = plot_dict.get("pdf_line_width",2)
     max_y_limit = plot_dict.get("max_y_limit",0.98)
+    plot_name = plot_dict.get("plot_name",'custom_plot.jpg')
+    ############################# PDF #####################################
+    if pdf_state:
+        pdf_arr = generate_pdf(save_path)
 
     ############################## Load GT Data ###########################
     true_params_filename = os.path.join(save_path, true_params_file_str)
@@ -133,8 +140,9 @@ def Custom_plot(ground_truth = True, HB_Est = True, FlatB_Est = True,TABLE = Fal
         y_lim = 0
         try:
             if HB_Est:
-                sns.kdeplot(est_coef_mean_arr[:, index[1], index[0]], ax=axi, fill=True, color=est_color, alpha=.4,
-                            warn_singular=False, linewidth=3)
+                print("HB add")
+                sns.kdeplot(est_coef_mean_arr[:, index[1], index[0]], ax=axi, fill=False, color=est_color, alpha=.4,
+                            warn_singular=False, linewidth=4,ls='--',label="Hierarchical Bayesian")
                 data = est_coef_mean_arr[:, index[1], index[0]]
                 kernel = gaussian_kde(data)
                 x_values = np.linspace(min(data), max(data), 100)
@@ -145,9 +153,10 @@ def Custom_plot(ground_truth = True, HB_Est = True, FlatB_Est = True,TABLE = Fal
 
 
             if ground_truth:
+                print("gt add")
                 if true_params:
-                    sns.kdeplot(gt_coef_array[index[0], index[1], :], ax=axi, fill=True, color=gt_color, alpha=.4,
-                                warn_singular=False, linewidth=1)
+                    sns.kdeplot(gt_coef_array[index[0], index[1], :], ax=axi, fill=False, color=gt_color, alpha=.8,
+                                warn_singular=False, linewidth=1,label="Ground Truth")
 
                     data = gt_coef_array[index[0], index[1], :]
                     kernel = gaussian_kde(data)
@@ -156,11 +165,24 @@ def Custom_plot(ground_truth = True, HB_Est = True, FlatB_Est = True,TABLE = Fal
                     kernel = gaussian_kde(data)
                     peak_y = np.max(y_values)
                     y_lim = max(y_lim, peak_y)
+            if pdf_state:
+                print("pdf add")
+                print(pdf_arr.shape)
+                sns.kdeplot(pdf_arr[index[0], index[1],:], ax=axi, fill=pdf_fill, color=pdf_color, alpha=.6,
+                            warn_singular=False, linewidth=4,label="Generator Distribution PDF")
+                # data = pdf_arr[index[0], index[1],:]
+                # kernel = gaussian_kde(data)
+                # x_values = np.linspace(min(data), max(data), 100)
+                # y_values = kernel(x_values)
+                # kernel = gaussian_kde(data)
+                # peak_y = np.max(y_values)
+                # y_lim = max(y_lim, peak_y)
 
         except:
             if HB_Est:
-                sns.kdeplot(est_coef_mean_arr[:, index[1], index[0]], ax=axi, fill=True, color=est_color, alpha=.4,
-                            warn_singular=False, linewidth=3)
+                print("HB add")
+                sns.kdeplot(est_coef_mean_arr[:, index[1], index[0]], ax=axi, fill=False, color=est_color, alpha=.4,
+                            warn_singular=False, linewidth=4,ls='--',label="Hierarchical Bayesian")
                 data = est_coef_mean_arr[:, index[1], index[0]]
                 kernel = gaussian_kde(data)
                 x_values = np.linspace(min(data), max(data), 100)
@@ -170,9 +192,10 @@ def Custom_plot(ground_truth = True, HB_Est = True, FlatB_Est = True,TABLE = Fal
                 y_lim = max(y_lim,peak_y)
 
             if ground_truth:
+                print("gt add")
                 if true_params:
-                    sns.kdeplot(gt_coef_array[index[0], index[1], :], ax=axi, fill=True, color=gt_color, alpha=.2,
-                                warn_singular=False, linewidth=1)
+                    sns.kdeplot(gt_coef_array[index[0], index[1], :], ax=axi, fill=False, color=gt_color, alpha=.8,
+                                warn_singular=False, linewidth=1,label="Ground Truth")
                     data = gt_coef_array[index[0], index[1], :]
                     kernel = gaussian_kde(data)
                     x_values = np.linspace(min(data), max(data), 100)
@@ -181,14 +204,25 @@ def Custom_plot(ground_truth = True, HB_Est = True, FlatB_Est = True,TABLE = Fal
                     peak_y = np.max(y_values)
                     y_lim = max(y_lim, peak_y)
 
-
+            if pdf_state:
+                print("pdf add")
+                sns.kdeplot(pdf_arr[index[0], index[1],:], ax=axi, fill=False, color=pdf_color, alpha=.4,
+                            warn_singular=False, linewidth=4,label="Generator Distribution PDF")
+                data = pdf_arr[index[0], index[1],:]
+                kernel = gaussian_kde(data)
+                x_values = np.linspace(min(data), max(data), 100)
+                y_values = kernel(x_values)
+                kernel = gaussian_kde(data)
+                peak_y = np.max(y_values)
+                y_lim = max(y_lim, peak_y)
 
         if FlatB_Est:
+            print("flat add")
             print("flat shape",flat_est_coef_array.shape)
-            sns.kdeplot(flat_est_coef_array[:, index[1],index[0]], ax=axi, fill=True, color=flat_color, alpha=.4,
-                        warn_singular=False, linewidth=3)
+            sns.kdeplot(flat_est_coef_array[:, index[1],index[0]], ax=axi, fill=False, color=flat_color, alpha=.4,
+                        warn_singular=False, linewidth=2,ls='-',label="Flat Bayesian")
             # max_y_limit = .98  # A good starting value, adjust as needed
-        axi.set_ylim(0, y_lim * 1.1)
+        axi.set_ylim(0, y_lim * 1.2)
 
         # est_mean = np.mean(est_coef_mean_arr[:, index[1], index[0]])
         # est_std = np.std(est_coef_mean_arr[:, index[1], index[0]])
@@ -200,7 +234,7 @@ def Custom_plot(ground_truth = True, HB_Est = True, FlatB_Est = True,TABLE = Fal
         # if true_params:
         #     axi.axvline(gt_mean, color=gt_color, linestyle='--', label=f'gt_mean = {gt_mean:.3f}')
 
-        axi.set_xlabel(f"{eqs[eq_i].split("=")[0]}\ncoef : {coef_names[index[1]]}", fontsize=xlabel_fontsize)
+        axi.set_xlabel(f"{eqs[eq_i].split("=")[0]}\n{coef_names[index[1]]}", fontsize=xlabel_fontsize)
         axi.set_ylabel(" ", fontsize=xlabel_fontsize)
         axi.xaxis.set_major_locator(plt.MaxNLocator(3))
         axi.set_yticks(np.array([0]))
@@ -209,6 +243,8 @@ def Custom_plot(ground_truth = True, HB_Est = True, FlatB_Est = True,TABLE = Fal
         axi.spines['left'].set_visible(False)
         axi.spines['top'].set_visible(False)
         axi.spines['right'].set_visible(False)
+        if col==n_cols-1 and row_plot_idx==0:
+            axi.legend(loc='center left', bbox_to_anchor=(.6, 0.9))
         if legend_True:
             axi.legend(loc='upper center', bbox_to_anchor=(0.5, 1.03), ncol=1, fancybox=True, shadow=True, fontsize=8)
 
@@ -264,6 +300,6 @@ def Custom_plot(ground_truth = True, HB_Est = True, FlatB_Est = True,TABLE = Fal
         bottom=0.2,  # Bottom margin (pushes subplots up)
         wspace=0.6  # Width space between subplots
     )
-    plt.savefig(os.path.join(os.getcwd(), 'custom_plot.jpg'))
+    plt.savefig(os.path.join(os.getcwd(), plot_name))
     plt.show()
     print("plot run finished")
