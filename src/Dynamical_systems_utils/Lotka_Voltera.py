@@ -281,7 +281,7 @@ def realparame2gtarray(real_params:dict):
 
     return gt_arr
 
-def generate_pdf(mean_std_arr, imposed_sign =np.array([[1,1,1,-1,1,1,1],[1,1,-1,1,1,1,1]]), pdf_smaple_N=100000, epsilon = 0.001):
+def generate_pdf(save_path, pdf_smaple_N=10000, epsilon = 0.01):
     """
 
     :param mean_std_arr:
@@ -302,21 +302,68 @@ def generate_pdf(mean_std_arr, imposed_sign =np.array([[1,1,1,-1,1,1,1],[1,1,-1,
     #     {'const':[0,0],'x': [real_params['alpha_mean'], real_params['alpha_std']], 'y': [0, 0], 'x*y': [real_params['beta_mean'], real_params['beta_std']], "x**2":[0,0],"y**2":[0,0]},
     #     {'const':[0,0],'x': [0, 0], 'y': [real_params['gamma_mean'], real_params['gamma_std']], 'x*y': [real_params['delta_mean'], real_params['delta_std']], "x**2":[0,0],"y**2":[0,0]}
     # ]
-    N_eq = mean_std_arr.shape[0]
-    N_coef = mean_std_arr.shape[1]
-    pdf_list = []
-    for eq_i in range(N_eq):
-        pdf_coef_list = []
-        for coef_i in range(N_coef):
-            coef_mean = mean_std_arr[eq_i, coef_i, 0]
-            coef_std = mean_std_arr[eq_i, coef_i, 1]
-            if coef_std == 0.00:
-                coef_std = epsilon
-            sign = imposed_sign[eq_i, coef_i]
+    with open(os.path.join(save_path, "system_param_dict.pkl"), "rb") as f:
+        system_param_dict = pickle.load(f)
 
-            samples =  np.abs(np.random.normal(coef_mean, coef_std, pdf_smaple_N)) # depending on the dynamical system, this part could be different.
-            samples = sign * samples
-            pdf_coef_list += [samples]
-        pdf_list+=[pdf_coef_list]
-    pdf_arr = np.array(pdf_list)
+    alpha_V = system_param_dict['alpha_info']['alpha_V'] if 'alpha_V' in system_param_dict['alpha_info'] else None
+    alpha_mean = system_param_dict['alpha_info']['alpha_mean'] if 'alpha_mean' in system_param_dict[
+        'alpha_info'] else None
+    alpha_std = system_param_dict['alpha_info']['alpha_std'] if 'alpha_std' in system_param_dict['alpha_info'] else None
+    alpha_N = system_param_dict['alpha_info']['alpha_N'] if 'alpha_N' in system_param_dict['alpha_info'] else None
+
+    beta_V = system_param_dict['beta_info']['beta_V'] if 'beta_V' in system_param_dict['beta_info'] else None
+    beta_mean = system_param_dict['beta_info']['beta_mean'] if 'beta_mean' in system_param_dict['beta_info'] else None
+    beta_std = system_param_dict['beta_info']['beta_std'] if 'beta_std' in system_param_dict['beta_info'] else None
+    beta_N = system_param_dict['beta_info']['beta_N'] if 'beta_N' in system_param_dict['beta_info'] else None
+
+    gamma_V = system_param_dict['gamma_info']['gamma_V'] if 'gamma_V' in system_param_dict['gamma_info'] else None
+    gamma_mean = system_param_dict['gamma_info']['gamma_mean'] if 'gamma_mean' in system_param_dict[
+        'gamma_info'] else None
+    gamma_std = system_param_dict['gamma_info']['gamma_std'] if 'gamma_std' in system_param_dict['gamma_info'] else None
+    gamma_N = system_param_dict['gamma_info']['gamma_N'] if 'gamma_N' in system_param_dict['gamma_info'] else None
+
+    delta_V = system_param_dict['delta_info']['delta_V'] if 'delta_V' in system_param_dict['delta_info'] else None
+    delta_mean = system_param_dict['delta_info']['delta_mean'] if 'delta_mean' in system_param_dict[
+        'delta_info'] else None
+    delta_std = system_param_dict['delta_info']['delta_std'] if 'delta_std' in system_param_dict['delta_info'] else None
+
+
+    alpha_list = []
+    beta_list = []
+    gamma_list = []
+    delta_list = []
+
+    alpha_gen = gen_param(pdf_smaple_N, alpha_V, alpha_mean, alpha_std)
+    beta_gen = gen_param(pdf_smaple_N, beta_V, beta_mean, beta_std)
+    gamma_gen = gen_param(pdf_smaple_N, gamma_V, gamma_mean, gamma_std)
+    delta_gen = gen_param(pdf_smaple_N, delta_V, delta_mean, delta_std)
+
+    for param_set in range(pdf_smaple_N):
+        alpha = math.fabs(alpha_gen.gen())
+        beta = math.fabs(beta_gen.gen())
+        gamma = math.fabs(gamma_gen.gen())
+        delta = math.fabs(delta_gen.gen())
+
+        alpha_list.append(alpha)
+        beta_list.append(-beta)
+        gamma_list.append(-gamma)
+        delta_list.append(delta)
+    # eqs = ["dx/dt = alpha * x - beta * x * y", "dy/dt = delta * x * y - gamma * y"]
+    # coef_names = ["const","x", "y", "x*y","x**2","y**2"]
+
+    coef_0 = [np.abs(np.random.normal(0, epsilon, pdf_smaple_N)),
+              np.array(alpha_list),
+              np.abs(np.random.normal(0, epsilon, pdf_smaple_N)),
+              np.array(beta_list),
+              np.abs(np.random.normal(0, epsilon, pdf_smaple_N)),
+              np.abs(np.random.normal(0, epsilon, pdf_smaple_N))]
+
+    coef_1 = [np.abs(np.random.normal(0, epsilon, pdf_smaple_N)),
+              np.abs(np.random.normal(0, epsilon, pdf_smaple_N)),
+              np.array(gamma_list),
+              np.array(delta_list),
+              np.abs(np.random.normal(0, epsilon, pdf_smaple_N)),
+              np.abs(np.random.normal(0, epsilon, pdf_smaple_N))]
+
+    pdf_arr = np.array([coef_0,coef_1])
     return pdf_arr

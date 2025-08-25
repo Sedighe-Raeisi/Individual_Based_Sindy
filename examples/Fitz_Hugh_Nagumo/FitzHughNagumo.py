@@ -27,7 +27,7 @@ model = MultiTargetMultiEquation_HSModel # The model should be general enough fo
 # As per your request: b0=2.0; b1=2.0; a=0.5 and I=1.5
 # We'll set these as fixed values for now, but you can change them to distributions
 # using 'N', 'mean', 'std' as in your original HO example.
-N_param_set = 500
+N_param_set = 5
 a_info = {"a_N":10, "a_mean": 0.5, "a_std":0.1} # Fixed value for 'a'
 b0_info = {"b0_N":10, "b0_mean": 2.0, "b0_std":0.2} #{"b0_V": 2.0} # Fixed value for 'b0'
 b1_info = {"b1_mean": 2.0, "b1_std":0.2}

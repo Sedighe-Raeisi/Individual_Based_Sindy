@@ -1,4 +1,5 @@
 import math
+import pickle
 
 from scipy.integrate import solve_ivp
 import numpy as np
@@ -361,7 +362,7 @@ def realparame2gtarray(real_params:dict):
 
     return gt_arr
 
-def generate_pdf(mean_std_arr, imposed_sign =np.array([[1,1,-1,-1,1,1,1],[1,1,-1,1,1,1,1]]), pdf_smaple_N=100000, epsilon = 0.001):
+def generate_pdf(save_path, pdf_smaple_N=10000, epsilon = 0.01):
     """
 
     :param mean_std_arr:
@@ -373,23 +374,78 @@ def generate_pdf(mean_std_arr, imposed_sign =np.array([[1,1,-1,-1,1,1,1],[1,1,-1
     Depending on the dynamical system, sometimes the pdf comes from a normal dist, somthimes comes from a abs of
     normal dist, and somethimes comes from a truncated dist. Thast why it should be defined as a function for each
     dynamical system.
+    eqs = ["dv/dt = I + v - (1/3)v^3 - w", "dw/dt = a*b0 + a*b1*v - a*w"]
+    coef_names = ["constant", "v", "w", "v**3", "v**2", "w**2", "v*w"]
 
     """
-    N_eq = mean_std_arr.shape[0]
-    N_coef = mean_std_arr.shape[1]
-    pdf_list = []
-    for eq_i in range(N_eq):
-        pdf_coef_list = []
-        for coef_i in range(N_coef):
-            coef_mean = mean_std_arr[eq_i, coef_i, 0]
-            coef_std = mean_std_arr[eq_i, coef_i, 1]
-            if coef_std == 0.00:
-                coef_std = epsilon
-            sign = imposed_sign[eq_i, coef_i]
+    with open(os.path.join(save_path,"system_param_dict.pkl"),"rb") as f:
+        system_param_dict = pickle.load(f)
 
-            samples =  np.abs(np.random.normal(coef_mean, coef_std, pdf_smaple_N)) # depending on the dynamical system, this part could be different.
-            samples = sign * samples
-            pdf_coef_list += [samples]
-        pdf_list+=[pdf_coef_list]
-    pdf_arr = np.array(pdf_list)
+
+    a_V = system_param_dict['a_info']["a_V"] if "a_V" in list(system_param_dict["a_info"].keys()) else None
+    a_mean = system_param_dict['a_info']["a_mean"] if "a_mean" in list(system_param_dict["a_info"].keys()) else None
+    a_std = system_param_dict['a_info']["a_std"] if "a_std" in list(system_param_dict["a_info"].keys()) else None
+
+    b0_V = system_param_dict['b0_info']["b0_V"] if "b0_V" in list(system_param_dict["b0_info"].keys()) else None
+    b0_mean = system_param_dict['b0_info']["b0_mean"] if "b0_mean" in list(
+        system_param_dict["b0_info"].keys()) else None
+    b0_std = system_param_dict['b0_info']["b0_std"] if "b0_std" in list(system_param_dict["b0_info"].keys()) else None
+
+    b1_V = system_param_dict['b1_info']["b1_V"] if "b1_V" in list(system_param_dict["b1_info"].keys()) else None
+    b1_mean = system_param_dict['b1_info']["b1_mean"] if "b1_mean" in list(
+        system_param_dict["b1_info"].keys()) else None
+    b1_std = system_param_dict['b1_info']["b1_std"] if "b1_std" in list(system_param_dict["b1_info"].keys()) else None
+
+    I_V = system_param_dict['I_info']["I_V"] if "I_V" in list(system_param_dict["I_info"].keys()) else None
+    I_mean = system_param_dict['I_info']["I_mean"] if "I_mean" in list(
+        system_param_dict["I_info"].keys()) else None
+    I_std = system_param_dict['I_info']["I_std"] if "I_std" in list(system_param_dict["I_info"].keys()) else None
+
+
+
+
+
+    I_list = []
+
+    ab0_list = []
+    ab1_list = []
+    a_list = []
+    constant_dwdt_list = []
+
+    a_gen = gen_param(pdf_smaple_N, a_V, a_mean, a_std)
+    b0_gen = gen_param(pdf_smaple_N, b0_V, b0_mean, b0_std)
+    b1_gen = gen_param(pdf_smaple_N, b1_V, b1_mean, b1_std)
+    I_gen = gen_param(pdf_smaple_N, I_V, I_mean, I_std)
+
+    for param_i in range(pdf_smaple_N):
+        a = math.fabs(a_gen.gen())
+        b0 = math.fabs(b0_gen.gen())
+        b1 = math.fabs(b1_gen.gen())
+        I = math.fabs(b1_gen.gen())
+        I_list.append(I)
+        ab0_list.append(a*b0)
+        ab1_list.append(a*b1)
+        a_list.append(a)
+
+        # eqs = ["dv/dt = I + v - (1/3)v^3 - w", "dw/dt = a*b0 + a*b1*v - a*w"]
+        # # Adjust coef_names to match the X array created in mix_data
+        # coef_names = ["constant", "v", "w", "v**3", "v**2", "w**2", "v*w"]
+
+    coef_list_0 = [np.array(I_list),  # const
+                  np.abs(np.random.normal(1, epsilon, pdf_smaple_N)),  #  #
+                  np.abs(np.random.normal(-1, epsilon, pdf_smaple_N)),
+                  np.abs(np.random.normal(-1 / 3., epsilon, pdf_smaple_N)), #
+                  np.abs(np.random.normal(0, epsilon, pdf_smaple_N)),  #
+                  np.abs(np.random.normal(0, epsilon, pdf_smaple_N)),
+                  np.abs(np.random.normal(0, epsilon, pdf_smaple_N))]
+
+    coef_list_1 = [np.array(ab0_list),  # const
+                  np.array(ab1_list),  #  #
+                  -1*np.array(a_list),
+                  np.abs(np.random.normal(0, epsilon, pdf_smaple_N)), #
+                  np.abs(np.random.normal(0, epsilon, pdf_smaple_N)),  #
+                  np.abs(np.random.normal(0, epsilon, pdf_smaple_N)),
+                  np.abs(np.random.normal(0, epsilon, pdf_smaple_N))]
+
+    pdf_arr = np.array([coef_list_0,coef_list_1])
     return pdf_arr
