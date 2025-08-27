@@ -4,6 +4,7 @@ from typing import Callable
 import pandas as pd
 import math
 import pickle
+import os
 
 # from src.Dynamical_systems_utils.Cognetive_RL.Daniel_Code.datasize_analysis import forget_rate
 from src.utils import gen_param

@@ -20,7 +20,7 @@ save_dir_prefix = "CRL_chk_"
 
 # Define parameters for RLC circuit
 Alpha_info = { "Alpha_mean": .3, "Alpha_std": 0.02}
-ForgetRate_info = {"ForgetRate_mean": .4, "ForgetRate_std":0.01}
+ForgetRate_info = {"ForgetRate_mean": .4, "ForgetRate_std":0.01}#, "zero_peak_portion":0.4}
 Session_info = {"n_trials_per_session":100, "n_sessions":2}
 
 model = MultiTargetMultiEquation_HSModel

@@ -154,7 +154,8 @@ def mix_data(system_param_dict,n_trials_per_session = None, n_sessions = None,
         system_param_dict["ForgetRate_info"].keys()) else None
     ForgetRate_std = system_param_dict['ForgetRate_info']["ForgetRate_std"] if "ForgetRate_std" in list(
         system_param_dict["ForgetRate_info"].keys()) else None
-
+    ForgetRate_zeroP = system_param_dict['ForgetRate_info']["zero_peak_portion"] if "zero_peak_portion" in list(
+        system_param_dict["ForgetRate_info"].keys()) else None
     n_trials_per_session = system_param_dict['Session_info']["n_trials_per_session"] if "n_trials_per_session" in list(
         system_param_dict["Session_info"].keys()) else 100
     n_sessions = system_param_dict['Session_info']["n_sessions"] if "n_sessions" in list(
@@ -169,7 +170,10 @@ def mix_data(system_param_dict,n_trials_per_session = None, n_sessions = None,
     alpha_list = []
     fr_list = []
     Alpha_gen = gen_param(N_param_set, Alpha_V, Alpha_mean, Alpha_std)
-    FR_gen = gen_param(N_param_set, ForgetRate_V, ForgetRate_mean, ForgetRate_std)
+    if ForgetRate_zeroP:
+        FR_gen = gen_param(N_param_set, ForgetRate_V, ForgetRate_mean, ForgetRate_std,zero_peak_portion = ForgetRate_zeroP)
+    else:
+        FR_gen = gen_param(N_param_set, ForgetRate_V, ForgetRate_mean, ForgetRate_std)
     for param_set in range(N_param_set):
         alpha = math.fabs(Alpha_gen.gen())
         forget_rate = math.fabs(FR_gen.gen())
