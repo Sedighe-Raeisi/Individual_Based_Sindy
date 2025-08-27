@@ -89,12 +89,12 @@ def compare_model(hb_save_dir_prefix,scaler = None):
     file_name = [file for file in os.listdir(root_path) if file.startswith(hb_save_dir_prefix)][0]
 
     # Save the combined DataFrame to a CSV file
-    csv_file_path = os.path.join(root_path, file_name + "_model_comparison.csv")
+    csv_file_path = os.path.join(root_path, "compare_"+file_name + ".csv")
     final_df.to_csv(csv_file_path)
     print(f"\nModel comparison results saved to {csv_file_path}")
 
     # Save the DataFrame to a pickle file as before
-    pkl_file_path = os.path.join(root_path, file_name + ".pkl")
+    pkl_file_path = os.path.join(root_path, "compare_"+file_name + ".pkl")
     with open(pkl_file_path, "wb") as f:
         pickle.dump(final_df, f)
     print(f"Model comparison results saved to {pkl_file_path}")
