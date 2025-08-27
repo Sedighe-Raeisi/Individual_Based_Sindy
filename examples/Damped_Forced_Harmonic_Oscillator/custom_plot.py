@@ -9,7 +9,7 @@ save_dir_prefix = "DFHO_chk_"
 
 to_plot = [[1,1],[1,2],[1,3]]
 plot_dict = {"est_color": "blue", "gt_color": "red", "flat_color":"green","pdf_color":"grey",
-             "legend": None, "xlabel_fontsize": 12, "title_fontsize": None,
+             "legend": None, "xlabel_fontsize": 20, "title_fontsize": None,
              "max_y_limit": 40.3,"save_name":"custom_with_pdf","pdf_fill":False}
 
 Custom_plot(generate_pdf, pdf_state=True, ground_truth = True, HB_Est = True, FlatB_Est = True,TABLE = False,

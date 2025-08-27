@@ -243,10 +243,10 @@ def Custom_plot(generate_pdf, ground_truth = True, HB_Est = True, FlatB_Est = Tr
         axi.spines['left'].set_visible(False)
         axi.spines['top'].set_visible(False)
         axi.spines['right'].set_visible(False)
-        if col==n_cols-1 and row_plot_idx==0:
-            axi.legend(loc='center left', bbox_to_anchor=(.6, 0.9))
-        if legend_True:
-            axi.legend(loc='upper center', bbox_to_anchor=(0.5, 1.03), ncol=1, fancybox=True, shadow=True, fontsize=8)
+        # if col==n_cols-1 and row_plot_idx==0:
+        #     axi.legend(loc='center left', bbox_to_anchor=(.8, 0.9), fontsize=xlabel_fontsize)
+        # if legend_True:
+        #     axi.legend(loc='upper center', bbox_to_anchor=(0.5, 1.03), ncol=1, fancybox=True, shadow=True, fontsize=8)
 
         plot_counter += 1
 
