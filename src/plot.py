@@ -183,7 +183,7 @@ def plot_scatter_gt_xy(save_path,gt_utils,realparame2gtarray, true_params_file_s
             if N_Eqs == 1:
                 axi = axes[coef_i]
             else:
-                axi = axes[coef_i, eq_i]
+                axi = axes[ eq_i,coef_i]
             print(f'sub plot {coef_i} is created')
             axi.scatter(X_data[:,coef_i,:],Y_data[:,eq_i,:], alpha=0.5, s=10)
 # Add titles and labels for clarity
@@ -234,7 +234,7 @@ def plot_all_traj(save_path,gt_utils,realparame2gtarray, true_params_file_str, s
             if N_Eqs == 1:
                 axi = axes[coef_i]
             else:
-                axi = axes[coef_i, eq_i]
+                axi = axes[ eq_i,coef_i]
             print(f'sub plot {coef_i} is created')
             for traj_i in range(N_indv):
                 axi.scatter(X_data[traj_i,coef_i,:],Y_data[traj_i,eq_i,:], alpha=0.5, s=1)

@@ -67,7 +67,7 @@ class FitzHughNagumo:
         """
         sol = solve_ivp(self._equations, t_span, [self.v0, self.w0],
                         dense_output=True, method='RK45')  # Using RK45 for accuracy
-        t_eval = np.arange(t_span[0], t_span[1] + dt, dt)
+        t_eval = np.arange(t_span[0], t_span[1] , dt)
         results = sol.sol(t_eval)
 
         # Add noise to the state variables (v and w)
@@ -197,17 +197,18 @@ def mix_data(system_param_dict):
     v_dwdt_list = []
     w_dwdt_list = []
 
-    a_gen = gen_param(N_param_set,a_V,a_mean,a_std)
-    b0_gen = gen_param(N_param_set,b0_V,b0_mean,b0_std)
-    b1_gen = gen_param(N_param_set, b1_V, b1_mean, b1_std)
-    I_gen = gen_param(N_param_set, I_V, I_mean, I_std)
-    v0_gen = gen_param(N_param_set, v0_V, v0_mean, v0_std)
-    w0_gen = gen_param(N_param_set, w0_V, w0_mean, w0_std)
+    a_gen = gen_param(N_param=N_param_set,a_V=a_V,a_mean=a_mean,a_std=a_std)
+    b0_gen = gen_param(N_param=N_param_set,a_V=b0_V,a_mean=b0_mean,a_std=b0_std)
+    b1_gen = gen_param(N_param=N_param_set, a_V=b1_V, a_mean=b1_mean, a_std=b1_std)
+    I_gen = gen_param(N_param=N_param_set, a_V=I_V, a_mean=I_mean, a_std=I_std)
+    v0_gen = gen_param(N_param=N_param_set, a_V=v0_V, a_mean=v0_mean, a_std=v0_std)
+    w0_gen = gen_param(N_param=N_param_set, a_V=w0_V, a_mean=w0_mean, a_std=w0_std)
+
     for param_i in range(N_param_set):
         a = math.fabs(a_gen.gen())
         b0 = math.fabs(b0_gen.gen())
         b1 = math.fabs(b1_gen.gen())
-        I = math.fabs(b1_gen.gen())
+        I = math.fabs(I_gen.gen())
         v0 = math.fabs(v0_gen.gen())
         w0 = math.fabs(w0_gen.gen())
 
@@ -220,7 +221,7 @@ def mix_data(system_param_dict):
         constant_dwdt_list.append(a * b0)  # Constant term for dw/dt
         v_dwdt_list.append(a * b1)  # Coefficient of v in dw/dt
         w_dwdt_list.append(-a)  # Coefficient of w in dw/dt
-
+        print(f"(a={a}, b0={b0}, b1={b1}, I={I}, v0={v0}, w0={w0})")
         fhn_system = FitzHughNagumo(a=a, b0=b0, b1=b1, I=I, v0=v0, w0=w0)
         results = fhn_system.simulate(t_span=(t_start, t_end), dt=dt, noise_std=noise_std)
 

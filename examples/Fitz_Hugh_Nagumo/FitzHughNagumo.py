@@ -16,9 +16,9 @@ import numpy as np
 
 print("---------------------- parameter defining ------------------------")
 NUM_WARMUP = 1000
-NUM_CHAINS = 4
+NUM_CHAINS = 3
 NUM_SAMPLES = 1000
-NUM_BATCH_SAMPLES = 5
+NUM_BATCH_SAMPLES = 1000
 root_path = "." # os.getcwd()
 save_dir_prefix = "FHN_chk_" # Changed prefix for FitzHugh-Nagumo checkpoints
 model = MultiTargetMultiEquation_HSModel # The model should be general enough for different systems
@@ -27,10 +27,10 @@ model = MultiTargetMultiEquation_HSModel # The model should be general enough fo
 # As per your request: b0=2.0; b1=2.0; a=0.5 and I=1.5
 # We'll set these as fixed values for now, but you can change them to distributions
 # using 'N', 'mean', 'std' as in your original HO example.
-N_param_set = 5
+N_param_set = 100
 a_info = {"a_N":10, "a_mean": 0.5, "a_std":0.1} # Fixed value for 'a'
 b0_info = {"b0_N":10, "b0_mean": 2.0, "b0_std":0.2} #{"b0_V": 2.0} # Fixed value for 'b0'
-b1_info = {"b1_mean": 2.0, "b1_std":0.2}
+b1_info = {"b1_mean": 2.0, "b1_std":0.1}
 I_info = {"I_mean": 1.5, "I_std":0.1}
 
 # Initial conditions (v0, w0) can be fixed or sampled from a distribution
@@ -53,7 +53,7 @@ system_param_dict = {"N_param_set":N_param_set,
     "t_info": t_info,
     "noise_info": noise_info
 }
-mode = "row_plot" # or "run" or "plot"
+mode = "run" # or "run" or "plot"
 print(f"--------------------------- mode = {mode} --------------------------------")
 if mode == "run":
     print("----------------------- run mcmc_utils -----------------------")
@@ -64,6 +64,7 @@ if mode == "run":
                  display_svi = True, mix_data = mix_data, gt_utils = gt_utils)
 elif mode == "row_plot":
     to_plot = [[1,0],[1,1]]
+
 
     true_params_file_str = f"chk_GT_Data.pkl"
     save_path = os.path.join(root_path, [file for file in os.listdir(root_path) if file.startswith(save_dir_prefix)][0])

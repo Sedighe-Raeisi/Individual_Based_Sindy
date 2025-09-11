@@ -8,9 +8,11 @@ from src.Dynamical_systems_utils.DampedForced_HO import gt_utils,realparame2gtar
 save_dir_prefix = "DFHO_chk_"
 
 to_plot = [[1,1],[1,2],[1,3]]
-plot_dict = {"est_color": "blue", "gt_color": "red", "flat_color":"green","pdf_color":"grey",
-             "legend": None, "xlabel_fontsize": 20, "title_fontsize": None,
-             "max_y_limit": 40.3,"save_name":"custom_with_pdf","pdf_fill":False}
+xlabel_list = ["$\\dot{v}$:$x$","$\\dot{v}$:$v$","$\\dot{v}$:$Cos\\omega \\cdot t$"]
+
+plot_dict = {"legend":True, "est_color": "blue", "gt_color": "red", "flat_color":"green","pdf_color":"grey",
+             "xlabel_fontsize": 18, "title_fontsize": None,
+             "max_y_limit": 40.3,"save_name":"custom_with_pdf","pdf_fill":False,"xlabel_list":xlabel_list}
 
 Custom_plot(generate_pdf, pdf_state=True, ground_truth = True, HB_Est = True, FlatB_Est = True,TABLE = False,
             gt_utils=gt_utils, realparame2gtarray=realparame2gtarray, save_dir_prefix=save_dir_prefix,

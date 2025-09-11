@@ -9,7 +9,7 @@ from src.mcmc_utils import BH_scaler
 def compare_model(hb_save_dir_prefix,scaler = None):
     """
     Loads MCMC results from two models, converts them to InferenceData,
-    and compares them using az.compare_results, az.loo, and az.waic.
+    and compares them using az.0compare_results, az.loo, and az.waic.
     """
     models = {}
     root_path = os.getcwd()
@@ -47,7 +47,7 @@ def compare_model(hb_save_dir_prefix,scaler = None):
     # --- Compute and Compare Metrics ---
     print("\nComputing model comparison metrics...")
 
-    # Use az.compare_results which already includes LOO and WAIC
+    # Use az.0compare_results which already includes LOO and WAIC
     comparison_results = az.compare(models, ic='loo', method='stacking')
 
     # Computing other useful metrics

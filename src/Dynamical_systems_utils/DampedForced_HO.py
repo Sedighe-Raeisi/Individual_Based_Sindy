@@ -62,7 +62,7 @@ class HarmonicOscillator:
         """
         sol = solve_ivp(self._equations, t_span, [self.x0, self.v0],
                         dense_output=True, method='RK45')  # Using RK45 for accuracy
-        t_eval = np.arange(t_span[0], t_span[1] + dt, dt)
+        t_eval = np.arange(t_span[0], t_span[1] , dt)
         results = sol.sol(t_eval)
         x = results[0] + np.random.normal(0, noise_std, len(t_eval))
         v = results[1] + np.random.normal(0, noise_std, len(t_eval))

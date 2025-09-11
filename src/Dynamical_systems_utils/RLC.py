@@ -86,6 +86,9 @@ def mix_data(system_param_dict):
     R_N = system_param_dict['R_info']["R_N"] if "R_N" in list(system_param_dict["R_info"].keys()) else None
     R_mean = system_param_dict['R_info']["R_mean"] if "R_mean" in list(system_param_dict["R_info"].keys()) else None
     R_std = system_param_dict['R_info']["R_std"] if "R_std" in list(system_param_dict["R_info"].keys()) else None
+    R_2Posrtion = system_param_dict['R_info']["R_2Posrtion"] if "R_2Posrtion" in list(system_param_dict["R_info"].keys()) else None
+    R_2mean = system_param_dict['R_info']["R_2mean"] if "R_2mean" in list(system_param_dict["R_info"].keys()) else None
+    R_2std = system_param_dict['R_info']["R_2std"] if "R_2std" in list(system_param_dict["R_info"].keys()) else None
 
     C_V = system_param_dict['C_info']["C_V"] if "C_V" in list(system_param_dict["C_info"].keys()) else None
     C_N = system_param_dict['C_info']["C_N"] if "C_N" in list(system_param_dict["C_info"].keys()) else None
@@ -115,53 +118,7 @@ def mix_data(system_param_dict):
     dt = system_param_dict['t_info']["dt"] if "dt" in list(system_param_dict["t_info"].keys()) else 0.01
     noise_std = system_param_dict['noise_info']["noise_std"] if "noise_std" in list(
         system_param_dict["noise_info"].keys()) else 0.01
-    #
-    # if L_V is not None:
-    #     L_vals = np.array([L_V])
-    # else:
-    #     L_vals = np.abs(np.random.normal(L_mean, L_std, L_N))
-    #
-    # if R_V is not None:
-    #     R_vals = np.array([R_V])
-    # else:
-    #     R_vals = np.abs(np.random.normal(R_mean, R_std, R_N))
-    #
-    # if C_V is not None:
-    #     C_vals = np.array([C_V])
-    # else:
-    #     C_vals = np.abs(np.random.normal(C_mean, C_std, C_N))
-    #
-    # if V_in_V is not None:
-    #     V_in_vals = np.array([V_in_V])
-    # else:
-    #     V_in_vals = np.abs(np.random.normal(V_in_mean, V_in_std, V_in_N))
-    #
-    # if q0_V is not None:
-    #     q0_vals = np.array([q0_V])
-    # else:
-    #     q0_vals = np.random.normal(q0_mean, q0_std, q0_N)
-    #
-    # if i0_V is not None:
-    #     i0_vals = np.array([i0_V])
-    # else:
-    #     i0_vals = np.random.normal(i0_mean, i0_std, i0_N)
-    #
-    #
-    # param_sets = []
-    # for L in L_vals:
-    #     for R in R_vals:
-    #         for C in C_vals:
-    #             for V_in in V_in_vals:
-    #                 for q0 in q0_vals:
-    #                     for i0 in i0_vals:
-    #                         param_sets.append({
-    #                             'L': L,
-    #                             'R': R,
-    #                             'C': C,
-    #                             'V_in': V_in,
-    #                             'q0': q0,
-    #                             'i0': i0
-    #                         })
+
 
     X_all = []
     Y_all = []
@@ -171,7 +128,9 @@ def mix_data(system_param_dict):
     rev_LC_list = []
 
     L_gen = gen_param(N_param_set,L_V,L_mean,L_std)
-    R_gen = gen_param(N_param_set,R_V,R_mean,R_std)
+    # print(f"{N_param_set},{R_V},{R_mean},{R_std},secondpeak_posrtion= {R_2Posrtion},secondpeak_mean= {R_2mean},secondpeak_std= {R_2std}")
+    R_gen = gen_param(N_param_set,R_mean,R_std,
+                      secondpeak_posrtion=R_2Posrtion,secondpeak_mean=R_2mean,secondpeak_std=R_2std)
     C_gen = gen_param(N_param_set,C_V,C_mean,C_std)
     Vin_gen = gen_param(N_param_set,V_in_V,V_in_mean,V_in_std)
     q0_gen = gen_param(N_param_set,q0_V,q0_mean,q0_std)

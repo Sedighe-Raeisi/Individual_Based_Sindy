@@ -55,32 +55,6 @@ def MultiTargetMultiEquation_HSModel(xx, yy):
     numpyro.sample("obs", dist.Normal(y_est, noise), obs=yy)
 
 
-################################### Normal Model ########################
-def MultiTargetMultiEquation_Normal(xx, yy):
-    n_targets = yy.shape[1]
-
-    n_IDs = xx.shape[0]
-    n_features = xx.shape[1]
-    n_obs = xx.shape[2]
-
-    μ_coef = numpyro.sample("μ_coef", dist.Normal(0,10.), sample_shape=(n_IDs, n_features, n_targets))
-    σ_coef = numpyro.sample("σ_coef", dist.HalfNormal(10.),sample_shape =(n_IDs,n_features,n_targets))
-
-
-    with numpyro.plate("plate_targets", n_targets):
-      with numpyro.plate("plate_features", n_features):
-        with numpyro.plate("plate_Indv", n_IDs):
-          coef = numpyro.sample("coef", dist.Normal(μ_coef, σ_coef))
-
-    y_est = jnp.einsum('ifo,ift->ito', xx, coef)
-    # for each target we should consider different noise
-    noise = numpyro.sample("noise", dist.HalfNormal(1),sample_shape=(n_targets,))
-    noise = jnp.expand_dims(jnp.expand_dims(noise, axis=1), axis=0)
-    noise = jnp.broadcast_to(noise, (n_IDs,n_targets,n_obs))
-
-    numpyro.sample("obs", dist.Normal(y_est, noise), obs=yy)
-
-
 ################################# Flat Bayesian Horseshoe Model ############################
 # def pre_Flat(xx, yy):
 #     n_ind, n_coef, n_obs = xx.shape
@@ -142,3 +116,42 @@ def Flat_HSModel(xx, yy):
     print(f"noise = {noise.shape}")
 
     numpyro.sample("obs", dist.Normal(y_est, noise), obs=yy)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    ################################### Normal Model ########################
+    def MultiTargetMultiEquation_Normal(xx, yy):
+        n_targets = yy.shape[1]
+
+        n_IDs = xx.shape[0]
+        n_features = xx.shape[1]
+        n_obs = xx.shape[2]
+
+        μ_coef = numpyro.sample("μ_coef", dist.Normal(0, 10.), sample_shape=(n_IDs, n_features, n_targets))
+        σ_coef = numpyro.sample("σ_coef", dist.HalfNormal(10.), sample_shape=(n_IDs, n_features, n_targets))
+
+        with numpyro.plate("plate_targets", n_targets):
+            with numpyro.plate("plate_features", n_features):
+                with numpyro.plate("plate_Indv", n_IDs):
+                    coef = numpyro.sample("coef", dist.Normal(μ_coef, σ_coef))
+
+        y_est = jnp.einsum('ifo,ift->ito', xx, coef)
+        # for each target we should consider different noise
+        noise = numpyro.sample("noise", dist.HalfNormal(1), sample_shape=(n_targets,))
+        noise = jnp.expand_dims(jnp.expand_dims(noise, axis=1), axis=0)
+        noise = jnp.broadcast_to(noise, (n_IDs, n_targets, n_obs))
+
+        numpyro.sample("obs", dist.Normal(y_est, noise), obs=yy)
+

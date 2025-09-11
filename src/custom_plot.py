@@ -29,7 +29,7 @@ def Custom_plot(generate_pdf, ground_truth = True, HB_Est = True, FlatB_Est = Tr
     true_params_file_str = f"chk_GT_Data.pkl"
     save_path = os.path.join(root_path, [file for file in os.listdir(root_path) if file.startswith(save_dir_prefix)][0])
 
-    legend_True = True if plot_dict is not None and plot_dict.get('legend') else None
+    legend_True = plot_dict.get('legend', False)
     xlabel_fontsize = plot_dict.get('xlabel_fontsize', None)
     title_fontsize = plot_dict.get('title_fontsize', None)
     est_color = plot_dict.get('est_color', 'blue')
@@ -39,7 +39,9 @@ def Custom_plot(generate_pdf, ground_truth = True, HB_Est = True, FlatB_Est = Tr
     pdf_fill = plot_dict.get("pdf_fill",False)
     pdf_line_width = plot_dict.get("pdf_line_width",2)
     max_y_limit = plot_dict.get("max_y_limit",0.98)
-    plot_name = plot_dict.get("plot_name",'custom_plot.jpg')
+    plot_name = plot_dict.get("plot_name",'custom_plot')
+    xlabel_list = plot_dict.get("xlabel_list",None)
+    # plt.rcParams["font.family"] = "Times New Roman"
     ############################# PDF #####################################
     if pdf_state:
         pdf_arr = generate_pdf(save_path)
@@ -70,20 +72,22 @@ def Custom_plot(generate_pdf, ground_truth = True, HB_Est = True, FlatB_Est = Tr
     print(f"est_coef_array.shape = {est_coef_array.shape}")
     est_coef_mean_arr = np.mean(est_coef_array, axis=0)
     ########################## Load Flat EST data #############################
-    flat_save_path = os.path.join(root_path, [file for file in os.listdir(root_path) if file.startswith('Flat_'+save_dir_prefix)][0])
-    if scaler is None:
+    if FlatB_Est:
+        flat_save_path = os.path.join(root_path, [file for file in os.listdir(root_path) if file.startswith('Flat_'+save_dir_prefix)][0])
+        if scaler is None:
 
-        npz_sample_path = os.path.join(flat_save_path, "mcmc_samples.npz")
-        loaded_samples = np.load(npz_sample_path, allow_pickle=True)
-        flat_est_coef = loaded_samples['coef']
-        flat_est_coef_array = np.array(flat_est_coef)
-    else:
-        with open(os.path.join(flat_save_path, f'revert_mcmc_samples.pkl'), 'rb') as f:
-            flat_mcmc_coef_results = pickle.load(f)
-            flat_est_coef_array = np.array(flat_mcmc_coef_results)
+            npz_sample_path = os.path.join(flat_save_path, "mcmc_samples.npz")
+            loaded_samples = np.load(npz_sample_path, allow_pickle=True)
+            flat_est_coef = loaded_samples['coef']
 
-    print(f"est_coef_array.shape = {flat_est_coef_array.shape}")
-    flat_est_coef_mean_arr = np.mean(flat_est_coef_array, axis=0)
+            flat_est_coef_array = np.array(flat_est_coef)
+        else:
+            with open(os.path.join(flat_save_path, f'revert_mcmc_samples.pkl'), 'rb') as f:
+                flat_mcmc_coef_results = pickle.load(f)
+                flat_est_coef_array = np.array(flat_mcmc_coef_results)
+
+        print(f"flat_coef_array.shape = {flat_est_coef_array.shape}")
+        flat_est_coef_mean_arr = np.mean(flat_est_coef_array, axis=0)
 
     ################### Prepare plot data and table data ##################
 
@@ -105,23 +109,31 @@ def Custom_plot(generate_pdf, ground_truth = True, HB_Est = True, FlatB_Est = Tr
                 print(f"not in plot index = {[eq_i, coef_i]}")
                 est_mean = np.mean(est_coef_mean_arr[:, coef_i, eq_i])
                 est_std = np.std(est_coef_mean_arr[:, coef_i, eq_i])
-
-                flatest_mean = np.mean(flat_est_coef_array[:, coef_i, eq_i])
-                flatest_std = np.std(flat_est_coef_array[:, coef_i, eq_i])
+                if FlatB_Est:
+                    flatest_mean = np.mean(flat_est_coef_array[:, coef_i, eq_i])
+                    flatest_std = np.std(flat_est_coef_array[:, coef_i, eq_i])
 
                 gt_mean = np.mean(gt_coef_array[eq_i, coef_i, :])
                 gt_std = np.std(gt_coef_array[eq_i, coef_i, :])
-                missed_coef_data.append([
-                    f'{eqs[eq_i].split("=")[0]} : {coef_names[coef_i]}',
-                    f'{gt_mean:.3f}', f'{est_mean:.3f}',f'{flatest_mean:.3f}',
-                    f'{gt_std:.3f}', f'{est_std:.3f}', f'{flatest_std:.3f}'
-                ])
+                if FlatB_Est:
+                    missed_coef_data.append([
+                        f'{eqs[eq_i].split("=")[0]} : {coef_names[coef_i]}',
+                        f'{gt_mean:.3f}', f'{est_mean:.3f}',f'{flatest_mean:.3f}',
+                        f'{gt_std:.3f}', f'{est_std:.3f}', f'{flatest_std:.3f}'
+                    ])
+                else:
+                    missed_coef_data.append([
+                        f'{eqs[eq_i].split("=")[0]} : {coef_names[coef_i]}',
+                        f'{gt_mean:.3f}', f'{est_mean:.3f}',
+                        f'{gt_std:.3f}', f'{est_std:.3f}'
+                    ])
 
     ploted_eqs = []
     plot_counter = 0
     used_axes = []
     fig = plt.figure(layout="constrained",figsize=(figwidth,fighigth))
     # Loop to create and populate the subplots for the specified indices
+    plot_i = 0
     for index in to_plot:
         row_plot_idx = plot_counter // n_cols
         col = plot_counter % n_cols
@@ -233,18 +245,25 @@ def Custom_plot(generate_pdf, ground_truth = True, HB_Est = True, FlatB_Est = Tr
         # axi.axvline(est_mean, color=est_color, linestyle='--', label=f'est_mean = {est_mean:.3f}')
         # if true_params:
         #     axi.axvline(gt_mean, color=gt_color, linestyle='--', label=f'gt_mean = {gt_mean:.3f}')
-
-        axi.set_xlabel(f"{eqs[eq_i].split("=")[0]}\n{coef_names[index[1]]}", fontsize=xlabel_fontsize)
+        if xlabel_list:
+            axi.set_xlabel(xlabel_list[plot_i], fontsize=xlabel_fontsize, fontname='Times New Roman')
+            plot_i+=1
+        else:
+            axi.set_xlabel(f"{eqs[index[0]].split("=")[0]}\n{coef_names[index[1]]}", fontsize=xlabel_fontsize)
         axi.set_ylabel(" ", fontsize=xlabel_fontsize)
         axi.xaxis.set_major_locator(plt.MaxNLocator(3))
         axi.set_yticks(np.array([0]))
         axi.set_yticklabels([""], fontsize=12, rotation=90)
         axi.yaxis.set_tick_params(length=0)
+        axi.xaxis.set_tick_params(labelsize=xlabel_fontsize-4)
         axi.spines['left'].set_visible(False)
         axi.spines['top'].set_visible(False)
         axi.spines['right'].set_visible(False)
-        # if col==n_cols-1 and row_plot_idx==0:
-        #     axi.legend(loc='center left', bbox_to_anchor=(.8, 0.9), fontsize=xlabel_fontsize)
+
+        # axi.set_xlim(0, 2)
+        if legend_True:
+            if col==n_cols-1 and row_plot_idx==0:
+                axi.legend(loc='center left', bbox_to_anchor=(1.2, 0.4), fontsize=xlabel_fontsize)
         # if legend_True:
         #     axi.legend(loc='upper center', bbox_to_anchor=(0.5, 1.03), ncol=1, fancybox=True, shadow=True, fontsize=8)
 
@@ -300,6 +319,7 @@ def Custom_plot(generate_pdf, ground_truth = True, HB_Est = True, FlatB_Est = Tr
         bottom=0.2,  # Bottom margin (pushes subplots up)
         wspace=0.6  # Width space between subplots
     )
-    plt.savefig(os.path.join(os.getcwd(), plot_name))
+    # plt.savefig(os.path.join(os.getcwd(), plot_name)+".pdf", format="pdf")
+    plt.savefig(os.path.join(os.getcwd(), plot_name) + ".svg")
     plt.show()
     print("plot run finished")

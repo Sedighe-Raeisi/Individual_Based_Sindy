@@ -61,7 +61,7 @@ class LotkaVolterra:
         """
         sol = solve_ivp(self._equations, t_span, [self.x0, self.y0],
                         dense_output=True, method='RK45')
-        t_eval = np.arange(t_span[0], t_span[1] + dt, dt)
+        t_eval = np.arange(t_span[0], t_span[1] , dt)
         results = sol.sol(t_eval)
         x = results[0] + np.random.normal(0, noise_std, len(t_eval))
         y = results[1] + np.random.normal(0, noise_std, len(t_eval))

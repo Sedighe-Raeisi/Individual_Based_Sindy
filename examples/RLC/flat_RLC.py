@@ -23,7 +23,8 @@ save_dir_prefix = "RLC_chk_"
 
 # Define parameters for RLC circuit
 L_info = { "L_mean": 1.0, "L_std": 0.2}
-R_info = {"R_mean": 1.0, "R_std":0.01}
+R_info = {"R_mean": 1.0, "R_std":0.01,
+          "R_2Posrtion":0.5 ,"R_2mean":2.0 , "R_2std":0.01}
 C_info = {"C_mean": 0.5, "C_std": 0.1}
 V_in_info = {"V_in_mean": 1.0,"V_in_std":0.03,"V_in_N":3}
 q0_info = {"q0_V": 0.0}
