@@ -119,16 +119,16 @@ $$
 As another application, we used this approach to recover the dynamics of an RLC circuit. The system is governed by the following equations:
   
 $$
-\dot{x}= v
+\dot{q}= i
 $$  
 
 $$
-\dot{v}= -\frac{R}{L} v - \frac{1}{LC} x + \frac{1}{L} V(t)
+\dot{i}= -\frac{R}{L} i - \frac{1}{LC} q + \frac{1}{L} V(t)
 $$  
 
 This section demonstrates the method's ability to accurately identify the governing equations for an electrical system.
 
-![custom_plot.jpg](examples/RLC/custom_plot.jpg)
+![custom_plot.jpg](examples/RLC/0RLC_chk_20250812_0922/custom_plot.jpg)
 ## Conclusions
 
 In this research, we provided an approach for data-driven model discovery that accounts for individual differences in governing models. We applied the method to various systems, and the results show that it is capable of recovering not just the mean and standard deviation of coefficient distributions but also their shapes. This enables us to find non-shared or multi-modal structures within a population of individuals. Our approach empowers scientists to build models that can explain differences among individuals.
