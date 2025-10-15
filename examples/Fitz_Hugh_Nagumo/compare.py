@@ -1,4 +1,4 @@
-from src.compare_0 import compare_model
+from src.compare import compare_model
 save_dir_prefix = "FHN_chk_"
 import os
 os.environ['PYTHONUNBUFFERED'] = '1'

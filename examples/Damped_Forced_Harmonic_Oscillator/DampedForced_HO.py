@@ -2,21 +2,19 @@ import os
 os.environ['PYTHONUNBUFFERED'] = '1'
 os.environ["XLA_FLAGS"] = "--xla_force_host_platform_device_count=64"
 import os.path
-import pickle
 
 from src.model import MultiTargetMultiEquation_HSModel
 from src.mcmc_utils import run_mcmc
 from src.Dynamical_systems_utils.DampedForced_HO import mix_data,gt_utils,realparame2gtarray, generate_pdf
 from src.plot import plt_mcmc, row_result
-import numpy as np
 
 
 print("---------------------- parameter defining ------------------------")
 NUM_WARMUP = 1000
 NUM_CHAINS = 3
 NUM_SAMPLES = 1000
-NUM_BATCH_SAMPLES = 5
-root_path = "." # os.getcwd()
+NUM_BATCH_SAMPLES = 1000
+root_path = os.getcwd()
 save_dir_prefix = "DFHO_chk_"
 model = MultiTargetMultiEquation_HSModel
 
@@ -30,7 +28,7 @@ omega_info = {"omega_V":1.5}
 system_param_dict = {"N_param_set":N_param_set, "m_info":m_info, "k_info":k_info, "c_info":c_info, "F0_info":F0_info, "omega_info":omega_info,
                      "x0_info":{}, "v0_info":{}, "t_info":{}, "noise_info":{}}
 
-mode = "row_plot" #"plot" or "run" or "row_plot"
+mode = "run" #"plot" or "run" or "row_plot"
 print(f"--------------------------- mode = {mode} --------------------------------")
 if mode == "run":
     print("----------------------- run mcmc_utils -----------------------")
@@ -55,7 +53,7 @@ elif mode=="plot":
 
     true_params_file_str = f"chk_GT_Data.pkl"
     save_path = os.path.join(root_path, [file for file in os.listdir(root_path) if file.startswith(save_dir_prefix)][0])
-    # plt_mcmc(save_path,gt_utils,realparame2gtarray, generate_pdf, true_params_file_str,4,complex_pdf=True)
+
 
     plt_mcmc(save_path, gt_utils, realparame2gtarray, generate_pdf, true_params_file_str,
             stop_subplot_n=None, figlength=3,

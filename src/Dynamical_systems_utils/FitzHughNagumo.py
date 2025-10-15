@@ -422,7 +422,7 @@ def generate_pdf(save_path, pdf_smaple_N=10000, epsilon = 0.01):
         a = math.fabs(a_gen.gen())
         b0 = math.fabs(b0_gen.gen())
         b1 = math.fabs(b1_gen.gen())
-        I = math.fabs(b1_gen.gen())
+        I = math.fabs(I_gen.gen())
         I_list.append(I)
         ab0_list.append(a*b0)
         ab1_list.append(a*b1)

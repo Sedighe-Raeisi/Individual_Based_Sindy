@@ -507,7 +507,7 @@ def row_result(save_path, gt_utils, realparame2gtarray, true_params_file_str,
             axi.legend(loc='upper center', bbox_to_anchor=(0.5, 1.03), ncol=1, fancybox=True, shadow=True, fontsize=8)
 
         plot_counter += 1
-        axi.set_xlim(0,2)
+        # axi.set_xlim(0,2)
 
     # Hide unused subplots
     for i in range(plot_counter, n_rows * n_cols):

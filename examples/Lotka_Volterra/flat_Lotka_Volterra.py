@@ -4,24 +4,22 @@ os.environ['PYTHONUNBUFFERED'] = '1'
 os.environ["XLA_FLAGS"] = "--xla_force_host_platform_device_count=64"
 
 from src.model import Flat_HSModel
-from src.flat_mcmc_utils import run_mcmc # Still using this utility
+from src.flat_mcmc_utils import run_mcmc
 from src.flat_plot import plt_mcmc
-# from src.dynamical_systems.FitzHughNagumo import mix_data,gt_utils,realparame2gtarray, generate_pdf
 from src.Dynamical_systems_utils.Lotka_Voltera import mix_data_lotka_volterra, gt_utils, realparame2gtarray, generate_pdf # Import LotkaVolterra functions
 import pickle
 from src.device import device_check
 dv_obj = device_check()
 dv_obj.check()
 print("---------------------- parameter defining ------------------------")
-NUM_WARMUP = 1000
+NUM_WARMUP = 100
 NUM_CHAINS = 1
 NUM_SAMPLES = 1000
-NUM_BATCH_SAMPLES = 5
+NUM_BATCH_SAMPLES = 1000
 root_path = os.getcwd()
-# root_path = os.path.join(root_path,"examples")
-# root_path = "C:\\Users\\s\\Downloads\\OsnabrukPostdocProject\\projects\\BH\\physical_system_v4\\examples"
-save_dir_prefix = "LV_chk_" # Changed prefix for Lotka-Volterra checkpoints
-model = Flat_HSModel # The model should be general enough for different systems
+
+save_dir_prefix = "LV_chk_"
+model = Flat_HSModel
 
 # --- Lotka-Volterra Parameters ---
 # Example usage for Lotka-Volterra:
@@ -52,7 +50,7 @@ if mode == "run":
                  NUM_WARMUP=NUM_WARMUP, NUM_CHAINS=NUM_CHAINS, NUM_SAMPLES=NUM_SAMPLES, NUM_BATCH_SAMPLES=NUM_BATCH_SAMPLES,
                  root_path = root_path, save_dir_prefix = save_dir_prefix,
                  program_state = "start", model = model,
-                 display_svi = True, mix_data = mix_data_lotka_volterra, gt_utils = gt_utils,scaler="scale") # Use LotkaVolterra mix_data
+                 display_svi = True, mix_data = mix_data_lotka_volterra, gt_utils = gt_utils,scaler="scale")
 elif mode=="plot":
 
 

@@ -2,7 +2,6 @@ import os
 os.environ['PYTHONUNBUFFERED'] = '1'
 os.environ["XLA_FLAGS"] = "--xla_force_host_platform_device_count=64"
 import os.path
-import pickle
 from src.model import Flat_HSModel
 from src.flat_mcmc_utils import run_mcmc
 from src.Dynamical_systems_utils.DampedForced_HO import mix_data,gt_utils,realparame2gtarray, generate_pdf
@@ -11,10 +10,10 @@ from src.flat_plot import plt_mcmc
 
 print("---------------------- parameter defining ------------------------")
 NUM_WARMUP = 1000
-NUM_CHAINS = 2
+NUM_CHAINS = 3
 NUM_SAMPLES = 1000
-NUM_BATCH_SAMPLES = 5
-root_path = "." # os.getcwd()
+NUM_BATCH_SAMPLES = 1000
+root_path = os.getcwd()
 save_dir_prefix = "DFHO_chk_"
 model = Flat_HSModel # The model should be general enough for different systems
 
@@ -28,7 +27,7 @@ omega_info = {"omega_V":1.5}
 system_param_dict = {"N_param_set":N_param_set, "m_info":m_info, "k_info":k_info, "c_info":c_info, "F0_info":F0_info, "omega_info":omega_info,
                      "x0_info":{}, "v0_info":{}, "t_info":{}, "noise_info":{}}
 
-mode = "plot" #"plot" or "run"
+mode = "run" #"plot" or "run"
 print(f"--------------------------- mode = {mode} --------------------------------")
 if mode == "run":
     print("----------------------- run mcmc_utils -----------------------")

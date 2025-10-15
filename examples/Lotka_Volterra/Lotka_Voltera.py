@@ -1,28 +1,24 @@
-import os.path
 import os
 os.environ['PYTHONUNBUFFERED'] = '1'
 os.environ["XLA_FLAGS"] = "--xla_force_host_platform_device_count=64"
-# Assuming src.model and src.mcmc_utils are still relevant and compatible
-# with the new data structure (X_all, Y_all, real_params from mix_data)
-from src.model import MultiTargetMultiEquation_HSModel # Still using this model
-from src.mcmc_utils import run_mcmc # Still using this utility
+
+from src.model import MultiTargetMultiEquation_HSModel
+from src.mcmc_utils import run_mcmc
 from src.plot import plt_mcmc, row_result
-# from src.dynamical_systems.FitzHughNagumo import mix_data,gt_utils,realparame2gtarray, generate_pdf
+
 from src.Dynamical_systems_utils.Lotka_Voltera import mix_data_lotka_volterra, gt_utils, realparame2gtarray, generate_pdf # Import LotkaVolterra functions
 import pickle
 from src.device import device_check
 dv_obj = device_check()
 dv_obj.check()
 print("---------------------- parameter defining ------------------------")
-NUM_WARMUP = 5
-NUM_CHAINS = 4
-NUM_SAMPLES = 5
-NUM_BATCH_SAMPLES = 5
+NUM_WARMUP = 1000
+NUM_CHAINS = 3
+NUM_SAMPLES = 1000
+NUM_BATCH_SAMPLES = 1000
 root_path = os.getcwd()
-# root_path = os.path.join(root_path,"examples")
-# root_path = "C:\\Users\\s\\Downloads\\OsnabrukPostdocProject\\projects\\BH\\physical_system_v4\\examples"
-save_dir_prefix = "LV_chk_" # Changed prefix for Lotka-Volterra checkpoints
-model = MultiTargetMultiEquation_HSModel # The model should be general enough for different systems
+save_dir_prefix = "LV_chk_" # prefix for Lotka-Volterra checkpoints
+model = MultiTargetMultiEquation_HSModel
 
 # --- Lotka-Volterra Parameters ---
 # Example usage for Lotka-Volterra:
@@ -45,7 +41,7 @@ system_param_dict = {"N_param_set":N_param_set,
     "t_info":{},
     "noise_info": {}
 }
-mode = "row_plot"#"run" # or "plot" or "row_plot"
+mode = "run"#"run" # or "plot" or "row_plot"
 print(f"--------------------------- mode = {mode} --------------------------------")
 if mode == "run":
     print("----------------------- run mcmc_utils -----------------------")
@@ -53,7 +49,7 @@ if mode == "run":
                  NUM_WARMUP=NUM_WARMUP, NUM_CHAINS=NUM_CHAINS, NUM_SAMPLES=NUM_SAMPLES, NUM_BATCH_SAMPLES=NUM_BATCH_SAMPLES,
                  root_path = root_path, save_dir_prefix = save_dir_prefix,
                  program_state = "start", model = model,
-                 display_svi = True, mix_data = mix_data_lotka_volterra, gt_utils = gt_utils,scaler="scale") # Use LotkaVolterra mix_data
+                 display_svi = True, mix_data = mix_data_lotka_volterra, gt_utils = gt_utils,scaler="scale")
 elif mode == "row_plot":
     to_plot = [[0,1],[0,3],[1,2],[1,3]]
 
@@ -66,10 +62,10 @@ elif mode == "row_plot":
                scaler="scale", to_plot=to_plot, plot_dict=plot_dict)
 elif mode=="plot":
 
-    true_params_file_str = f"chk_GT_Data.pkl" # Updated filename
+    true_params_file_str = f"chk_GT_Data.pkl"
     save_path = os.path.join(root_path, [file for file in os.listdir(root_path) if file.startswith(save_dir_prefix)][0])
     print(save_path)
 
     plt_mcmc(save_path, gt_utils, realparame2gtarray, generate_pdf, true_params_file_str,
              stop_subplot_n=None, figlength=3,
-             complex_pdf=False, x_range=None, scaler="scale")
+             complex_pdf=True, x_range=None, scaler="scale")

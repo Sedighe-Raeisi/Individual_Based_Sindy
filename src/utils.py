@@ -19,17 +19,16 @@ class gen_param:
         if self.a_V is not None:
             return self.a_V
         elif self.a_mean is not None and self.a_std is not None:
-            if self.zero_portion is None:
-                if self.secondpeak_posrtion is None:
-                    self.gen_count += 1
-                    return np.random.normal(self.a_mean, self.a_std)
 
-            elif self.secondpeak_posrtion:
+
+            if self.secondpeak_posrtion is not None:
+                print("############################# second peak activated ######################")
                 secondpeak_N = int(self.secondpeak_posrtion * self.N_param)
                 if self.gen_count<secondpeak_N:
                     self.gen_count+=1
                     return np.random.normal(self.secondpeak_mean, self.secondpeak_std)
                 else:
+                    print("second_portion_cont = " ,self.gen_count)
                     self.gen_count+= 1
                     return np.random.normal(self.a_mean, self.a_std)
 
@@ -42,6 +41,11 @@ class gen_param:
                 else:
                     self.gen_count+= 1
                     return np.random.normal(self.a_mean, self.a_std)
+
+            # elif self.zero_portion is None and self.secondpeak_posrtion is None:
+            else:
+                self.gen_count += 1
+                return np.random.normal(self.a_mean, self.a_std)
 
 
         else:

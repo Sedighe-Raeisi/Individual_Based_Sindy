@@ -19,7 +19,16 @@ from scipy.stats import gaussian_kde
 
 def Custom_plot(generate_pdf, ground_truth = True, HB_Est = True, FlatB_Est = True,pdf_state = True, TABLE = False, gt_utils=None, realparame2gtarray=None, save_dir_prefix=None,
                fighigth=3, figwidth=12, n_rows=None, n_cols=None,
-               scaler=None, to_plot=None, plot_dict=dict()):
+               scaler=None, to_plot=None, plot_dict=dict(),xlim=None):
+    # plt.rcParams["font.family"] = "serif"
+    # plt.rcParams["font.serif"] = ["Times New Roman"]
+    # plt.rcParams['text.usetex'] = True
+    plt.rcParams['mathtext.fontset'] = 'stix'
+    plt.rcParams['font.family'] = 'STIXGeneral'
+
+
+    # Add an explicit setting for the axes label font properties if needed
+    plt.rcParams['axes.labelsize'] = 'large'
     if TABLE:
         all_cols = n_cols+2
     else:
@@ -151,24 +160,14 @@ def Custom_plot(generate_pdf, ground_truth = True, HB_Est = True, FlatB_Est = Tr
         # used_axes.append(axi)
         y_lim = 0
         try:
-            if HB_Est:
-                print("HB add")
-                sns.kdeplot(est_coef_mean_arr[:, index[1], index[0]], ax=axi, fill=False, color=est_color, alpha=.4,
-                            warn_singular=False, linewidth=4,ls='--',label="Hierarchical Bayesian")
-                data = est_coef_mean_arr[:, index[1], index[0]]
-                kernel = gaussian_kde(data)
-                x_values = np.linspace(min(data), max(data), 100)
-                y_values = kernel(x_values)
-                kernel = gaussian_kde(data)
-                peak_y = np.max(y_values)
-                y_lim = max(y_lim,peak_y)
+
 
 
             if ground_truth:
                 print("gt add")
                 if true_params:
                     sns.kdeplot(gt_coef_array[index[0], index[1], :], ax=axi, fill=False, color=gt_color, alpha=.8,
-                                warn_singular=False, linewidth=1,label="Ground Truth")
+                                warn_singular=False, linewidth=1,label="Observed Data")
 
                     data = gt_coef_array[index[0], index[1], :]
                     kernel = gaussian_kde(data)
@@ -180,8 +179,8 @@ def Custom_plot(generate_pdf, ground_truth = True, HB_Est = True, FlatB_Est = Tr
             if pdf_state:
                 print("pdf add")
                 print(pdf_arr.shape)
-                sns.kdeplot(pdf_arr[index[0], index[1],:], ax=axi, fill=pdf_fill, color=pdf_color, alpha=.6,
-                            warn_singular=False, linewidth=4,label="Generator Distribution PDF")
+                sns.kdeplot(pdf_arr[index[0], index[1],:], ax=axi, fill=pdf_fill, color=pdf_color, alpha=.4,
+                            warn_singular=False, linewidth=1,label="Data Generating PDF")
                 # data = pdf_arr[index[0], index[1],:]
                 # kernel = gaussian_kde(data)
                 # x_values = np.linspace(min(data), max(data), 100)
@@ -189,8 +188,6 @@ def Custom_plot(generate_pdf, ground_truth = True, HB_Est = True, FlatB_Est = Tr
                 # kernel = gaussian_kde(data)
                 # peak_y = np.max(y_values)
                 # y_lim = max(y_lim, peak_y)
-
-        except:
             if HB_Est:
                 print("HB add")
                 sns.kdeplot(est_coef_mean_arr[:, index[1], index[0]], ax=axi, fill=False, color=est_color, alpha=.4,
@@ -203,11 +200,14 @@ def Custom_plot(generate_pdf, ground_truth = True, HB_Est = True, FlatB_Est = Tr
                 peak_y = np.max(y_values)
                 y_lim = max(y_lim,peak_y)
 
+        except:
+
+
             if ground_truth:
                 print("gt add")
                 if true_params:
                     sns.kdeplot(gt_coef_array[index[0], index[1], :], ax=axi, fill=False, color=gt_color, alpha=.8,
-                                warn_singular=False, linewidth=1,label="Ground Truth")
+                                warn_singular=False, linewidth=1,label="Observed Data")
                     data = gt_coef_array[index[0], index[1], :]
                     kernel = gaussian_kde(data)
                     x_values = np.linspace(min(data), max(data), 100)
@@ -219,7 +219,7 @@ def Custom_plot(generate_pdf, ground_truth = True, HB_Est = True, FlatB_Est = Tr
             if pdf_state:
                 print("pdf add")
                 sns.kdeplot(pdf_arr[index[0], index[1],:], ax=axi, fill=False, color=pdf_color, alpha=.4,
-                            warn_singular=False, linewidth=4,label="Generator Distribution PDF")
+                            warn_singular=False, linewidth=1,label="Data Generating PDF")
                 data = pdf_arr[index[0], index[1],:]
                 kernel = gaussian_kde(data)
                 x_values = np.linspace(min(data), max(data), 100)
@@ -228,11 +228,23 @@ def Custom_plot(generate_pdf, ground_truth = True, HB_Est = True, FlatB_Est = Tr
                 peak_y = np.max(y_values)
                 y_lim = max(y_lim, peak_y)
 
+            if HB_Est:
+                print("HB add")
+                sns.kdeplot(est_coef_mean_arr[:, index[1], index[0]], ax=axi, fill=False, color=est_color, alpha=.4,
+                            warn_singular=False, linewidth=4,ls='--',label="Hierarchical Bayesian")
+                data = est_coef_mean_arr[:, index[1], index[0]]
+                kernel = gaussian_kde(data)
+                x_values = np.linspace(min(data), max(data), 100)
+                y_values = kernel(x_values)
+                kernel = gaussian_kde(data)
+                peak_y = np.max(y_values)
+                y_lim = max(y_lim,peak_y)
+
         if FlatB_Est:
             print("flat add")
             print("flat shape",flat_est_coef_array.shape)
             sns.kdeplot(flat_est_coef_array[:, index[1],index[0]], ax=axi, fill=False, color=flat_color, alpha=.4,
-                        warn_singular=False, linewidth=2,ls='-',label="Flat Bayesian")
+                        warn_singular=False, linewidth=4,ls='--',label="Flat Bayesian")
             # max_y_limit = .98  # A good starting value, adjust as needed
         axi.set_ylim(0, y_lim * 1.2)
 
@@ -246,11 +258,13 @@ def Custom_plot(generate_pdf, ground_truth = True, HB_Est = True, FlatB_Est = Tr
         # if true_params:
         #     axi.axvline(gt_mean, color=gt_color, linestyle='--', label=f'gt_mean = {gt_mean:.3f}')
         if xlabel_list:
-            axi.set_xlabel(xlabel_list[plot_i], fontsize=xlabel_fontsize, fontname='Times New Roman')
+            axi.set_xlabel(xlabel_list[plot_i], fontsize=xlabel_fontsize)#, fontdict={'family': 'Times New Roman'})
+            if xlim:
+                axi.set_xlim(xlim[plot_i][0], xlim[plot_i][1])
             plot_i+=1
         else:
-            axi.set_xlabel(f"{eqs[index[0]].split("=")[0]}\n{coef_names[index[1]]}", fontsize=xlabel_fontsize)
-        axi.set_ylabel(" ", fontsize=xlabel_fontsize)
+            axi.set_xlabel(f"{eqs[index[0]].split("=")[0]}\n{coef_names[index[1]]}", fontsize=xlabel_fontsize)#, fontdict={'family': 'Times New Roman'})
+        axi.set_ylabel(" ", fontsize=xlabel_fontsize)#, fontdict={'family': 'Times New Roman'})
         axi.xaxis.set_major_locator(plt.MaxNLocator(3))
         axi.set_yticks(np.array([0]))
         axi.set_yticklabels([""], fontsize=12, rotation=90)
@@ -261,9 +275,10 @@ def Custom_plot(generate_pdf, ground_truth = True, HB_Est = True, FlatB_Est = Tr
         axi.spines['right'].set_visible(False)
 
         # axi.set_xlim(0, 2)
+
         if legend_True:
             if col==n_cols-1 and row_plot_idx==0:
-                axi.legend(loc='center left', bbox_to_anchor=(1.2, 0.4), fontsize=xlabel_fontsize)
+                axi.legend(loc='center left', bbox_to_anchor=(1.0, 0.4), fontsize=xlabel_fontsize)
         # if legend_True:
         #     axi.legend(loc='upper center', bbox_to_anchor=(0.5, 1.03), ncol=1, fancybox=True, shadow=True, fontsize=8)
 

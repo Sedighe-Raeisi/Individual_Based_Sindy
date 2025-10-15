@@ -81,6 +81,9 @@ def mix_data(system_param_dict):
     L_N = system_param_dict['L_info']["L_N"] if "L_N" in list(system_param_dict["L_info"].keys()) else None
     L_mean = system_param_dict['L_info']["L_mean"] if "L_mean" in list(system_param_dict["L_info"].keys()) else None
     L_std = system_param_dict['L_info']["L_std"] if "L_std" in list(system_param_dict["L_info"].keys()) else None
+    L_2Posrtion = system_param_dict['L_info']["L_2Posrtion"] if "L_2Posrtion" in list(system_param_dict["L_info"].keys()) else None
+    L_2mean = system_param_dict['L_info']["L_2mean"] if "L_2mean" in list(system_param_dict["L_info"].keys()) else None
+    L_2std = system_param_dict['L_info']["L_2std"] if "L_2std" in list(system_param_dict["L_info"].keys()) else None
 
     R_V = system_param_dict['R_info']["R_V"] if "R_V" in list(system_param_dict["R_info"].keys()) else None
     R_N = system_param_dict['R_info']["R_N"] if "R_N" in list(system_param_dict["R_info"].keys()) else None
@@ -94,6 +97,10 @@ def mix_data(system_param_dict):
     C_N = system_param_dict['C_info']["C_N"] if "C_N" in list(system_param_dict["C_info"].keys()) else None
     C_mean = system_param_dict['C_info']["C_mean"] if "C_mean" in list(system_param_dict["C_info"].keys()) else None
     C_std = system_param_dict['C_info']["C_std"] if "C_std" in list(system_param_dict["C_info"].keys()) else None
+    C_2Posrtion = system_param_dict['C_info']["C_2Posrtion"] if "C_2Posrtion" in list(
+        system_param_dict["C_info"].keys()) else None
+    C_2mean = system_param_dict['C_info']["C_2mean"] if "C_2mean" in list(system_param_dict["C_info"].keys()) else None
+    C_2std = system_param_dict['C_info']["C_2std"] if "C_2std" in list(system_param_dict["C_info"].keys()) else None
 
     V_in_V = system_param_dict['V_in_info']["V_in_V"] if "V_in_V" in list(system_param_dict["V_in_info"].keys()) else None
     V_in_N = system_param_dict['V_in_info']["V_in_N"] if "V_in_N" in list(system_param_dict["V_in_info"].keys()) else None
@@ -127,11 +134,10 @@ def mix_data(system_param_dict):
     R_L_list = []
     rev_LC_list = []
 
-    L_gen = gen_param(N_param_set,L_V,L_mean,L_std)
+    L_gen = gen_param(N_param = N_param_set,a_mean=L_mean,a_std=L_std,secondpeak_posrtion=L_2Posrtion,secondpeak_mean=L_2mean,secondpeak_std=L_2std)
     # print(f"{N_param_set},{R_V},{R_mean},{R_std},secondpeak_posrtion= {R_2Posrtion},secondpeak_mean= {R_2mean},secondpeak_std= {R_2std}")
-    R_gen = gen_param(N_param_set,R_mean,R_std,
-                      secondpeak_posrtion=R_2Posrtion,secondpeak_mean=R_2mean,secondpeak_std=R_2std)
-    C_gen = gen_param(N_param_set,C_V,C_mean,C_std)
+    R_gen = gen_param(N_param = N_param_set,a_mean=R_mean,a_std=R_std,secondpeak_posrtion=R_2Posrtion,secondpeak_mean=R_2mean,secondpeak_std=R_2std)
+    C_gen = gen_param(N_param = N_param_set,a_mean=C_mean,a_std=C_std,secondpeak_posrtion=C_2Posrtion,secondpeak_mean=C_2mean,secondpeak_std=C_2std)
     Vin_gen = gen_param(N_param_set,V_in_V,V_in_mean,V_in_std)
     q0_gen = gen_param(N_param_set,q0_V,q0_mean,q0_std)
     i0_gen = gen_param(N_param_set,i0_V,i0_mean,i0_std)
@@ -238,20 +244,33 @@ def generate_pdf(save_path, pdf_smaple_N=10000, epsilon = 0.001 ):
     with open(os.path.join(save_path, "system_param_dict.pkl"), "rb") as f:
         system_param_dict = pickle.load(f)
 
+    N_param_set = system_param_dict['N_param_set']
     L_V = system_param_dict['L_info']["L_V"] if "L_V" in list(system_param_dict["L_info"].keys()) else None
     L_N = system_param_dict['L_info']["L_N"] if "L_N" in list(system_param_dict["L_info"].keys()) else None
     L_mean = system_param_dict['L_info']["L_mean"] if "L_mean" in list(system_param_dict["L_info"].keys()) else None
     L_std = system_param_dict['L_info']["L_std"] if "L_std" in list(system_param_dict["L_info"].keys()) else None
+    L_2Posrtion = system_param_dict['L_info']["L_2Posrtion"] if "L_2Posrtion" in list(
+        system_param_dict["L_info"].keys()) else None
+    L_2mean = system_param_dict['L_info']["L_2mean"] if "L_2mean" in list(system_param_dict["L_info"].keys()) else None
+    L_2std = system_param_dict['L_info']["L_2std"] if "L_2std" in list(system_param_dict["L_info"].keys()) else None
 
     R_V = system_param_dict['R_info']["R_V"] if "R_V" in list(system_param_dict["R_info"].keys()) else None
     R_N = system_param_dict['R_info']["R_N"] if "R_N" in list(system_param_dict["R_info"].keys()) else None
     R_mean = system_param_dict['R_info']["R_mean"] if "R_mean" in list(system_param_dict["R_info"].keys()) else None
     R_std = system_param_dict['R_info']["R_std"] if "R_std" in list(system_param_dict["R_info"].keys()) else None
+    R_2Posrtion = system_param_dict['R_info']["R_2Posrtion"] if "R_2Posrtion" in list(
+        system_param_dict["R_info"].keys()) else None
+    R_2mean = system_param_dict['R_info']["R_2mean"] if "R_2mean" in list(system_param_dict["R_info"].keys()) else None
+    R_2std = system_param_dict['R_info']["R_2std"] if "R_2std" in list(system_param_dict["R_info"].keys()) else None
 
     C_V = system_param_dict['C_info']["C_V"] if "C_V" in list(system_param_dict["C_info"].keys()) else None
     C_N = system_param_dict['C_info']["C_N"] if "C_N" in list(system_param_dict["C_info"].keys()) else None
     C_mean = system_param_dict['C_info']["C_mean"] if "C_mean" in list(system_param_dict["C_info"].keys()) else None
     C_std = system_param_dict['C_info']["C_std"] if "C_std" in list(system_param_dict["C_info"].keys()) else None
+    C_2Posrtion = system_param_dict['C_info']["C_2Posrtion"] if "C_2Posrtion" in list(
+        system_param_dict["C_info"].keys()) else None
+    C_2mean = system_param_dict['C_info']["C_2mean"] if "C_2mean" in list(system_param_dict["C_info"].keys()) else None
+    C_2std = system_param_dict['C_info']["C_2std"] if "C_2std" in list(system_param_dict["C_info"].keys()) else None
 
     V_in_V = system_param_dict['V_in_info']["V_in_V"] if "V_in_V" in list(system_param_dict["V_in_info"].keys()) else None
     V_in_N = system_param_dict['V_in_info']["V_in_N"] if "V_in_N" in list(system_param_dict["V_in_info"].keys()) else None
@@ -263,17 +282,42 @@ def generate_pdf(save_path, pdf_smaple_N=10000, epsilon = 0.001 ):
     if L_V is not None:
         L_vals = np.abs(np.random.normal(L_V,epsilon, pdf_smaple_N))
     else:
-        L_vals = np.abs(np.random.normal(L_mean, L_std, pdf_smaple_N))
+        if L_2Posrtion is not None:
+            p2=int(pdf_smaple_N*L_2Posrtion)
+            p1=pdf_smaple_N-p2
+            peak1=np.abs(np.random.normal(L_mean,L_std,p1))
+            peak2=np.abs(np.random.normal(L_2mean,L_2std,p2))
+
+            L_vals = np.concatenate((peak1,peak2))
+        else:
+            L_vals = np.abs(np.random.normal(L_mean, L_std, pdf_smaple_N))
+
 
     if R_V is not None:
         R_vals = np.abs(np.random.normal(R_V,epsilon, pdf_smaple_N))
     else:
-        R_vals = np.abs(np.random.normal(R_mean, R_std, pdf_smaple_N))
+        if R_2Posrtion is not None:
+            p2 = int(pdf_smaple_N * R_2Posrtion)
+            p1 = pdf_smaple_N - p2
+            peak1 = np.abs(np.random.normal(R_mean, R_std, p1))
+            peak2 = np.abs(np.random.normal(R_2mean, R_2std, p2))
+
+            R_vals = np.concatenate((peak1, peak2))
+        else:
+            R_vals = np.abs(np.random.normal(R_mean, R_std, pdf_smaple_N))
 
     if C_V is not None:
         C_vals = np.abs(np.random.normal(C_V,epsilon, pdf_smaple_N))
     else:
-        C_vals = np.abs(np.random.normal(C_mean, C_std, pdf_smaple_N))
+        if C_2Posrtion is not None:
+            p2 = int(pdf_smaple_N * C_2Posrtion)
+            p1 = pdf_smaple_N - p2
+            peak1 = np.abs(np.random.normal(C_mean, C_std, p1))
+            peak2 = np.abs(np.random.normal(C_2mean, C_2std, p2))
+
+            C_vals = np.concatenate((peak1, peak2))
+        else:
+            C_vals = np.abs(np.random.normal(C_mean, C_std, pdf_smaple_N))
 
     if V_in_V is not None:
         V_in_vals = np.abs(np.random.normal(V_in_V,epsilon, pdf_smaple_N))

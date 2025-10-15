@@ -13,19 +13,21 @@ device.check()
 
 print("---------------------- parameter defining ------------------------")
 
-N_param_set = 100
-NUM_WARMUP = 1000
-NUM_CHAINS = 3
+N_param_set = 10
+NUM_WARMUP = 100
+NUM_CHAINS = 1
 NUM_SAMPLES = 1000
 NUM_BATCH_SAMPLES = 5
 root_path = os.getcwd()
 save_dir_prefix = "RLC_chk_"
 
 # Define parameters for RLC circuit
-L_info = { "L_mean": 1.0, "L_std": 0.2}
-R_info = {"R_mean": 1.0, "R_std":0.01,
-          "R_2Posrtion":0.5 ,"R_2mean":2.0 , "R_2std":0.01}
-C_info = {"C_mean": 0.5, "C_std": 0.1}
+L_info = { "L_mean": 1.0, "L_std": 0.005,
+           "L_2Posrtion":0.5 ,"L_2mean":4.0 , "L_2std":0.005}
+
+R_info = {"R_mean": 1.0, "R_std":0.01} #,
+          # "R_2Posrtion":0.5 ,"R_2mean":2.0 , "R_2std":0.01}
+C_info = {"C_mean": 0.5, "C_std": 0.01}
 V_in_info = {"V_in_mean": 1.0,"V_in_std":0.03,"V_in_N":3}
 q0_info = {"q0_V": 0.0}
 i0_info = {"i0_V": 0.0}
@@ -34,7 +36,7 @@ model = MultiTargetMultiEquation_HSModel
 
 system_param_dict = {"N_param_set":N_param_set,"L_info":L_info, "R_info":R_info, "C_info":C_info, "V_in_info":V_in_info,
                      "q0_info":q0_info, "i0_info":i0_info, "t_info":{}, "noise_info":{}} # Updated parameter dictionary
-mode = "run"#"run" # or "plot" or "row_plot"
+mode = "row_plot"#"run" # or "plot" or "row_plot"
 print(f"--------------------------- mode = {mode} --------------------------------")
 if mode == "run":
     print("----------------------- run mcmc_utils -----------------------")
