@@ -33,7 +33,7 @@ Our approach first involves creating a library of candidate terms. The data, $X$
 Using MCMC as an inference method, we recover the distribution of each coefficient in the library of candidate terms once the recovered samples are stationary. The Bayesian model has two levels: the coefficients of the candidate terms can differ along the individual axis. To induce sparsity, we set the Horseshoe distribution as the prior for the coefficient of each individual.
 
 > 
->![One_Fig2rull_them_all.jpg](Figs/One_Fig2rull_them_all.jpg)   
+>![One_Fig2rull_them_all.jpg](Figs/OneFig2RuleThemAll_utils/One_Fig2rule_them_all.jpg)   
 > **Figure 1**: Individual-based SINDy. (Top) A schematic process for deriving the posterior distribution of the model. (Bottom left) The structure of the Bayesian model. (Bottom right) The use case for the Lotka-Volterra dynamical system with results.
 
 In some dynamical systems, the standard deviation of the time series for certain candidate terms can be large. In these cases, **scaling is crucial** for the MCMC algorithm to converge to a stationary state. The scaling affects the constant and factor coefficients differently.
