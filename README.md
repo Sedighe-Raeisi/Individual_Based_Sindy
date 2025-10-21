@@ -70,7 +70,7 @@ $$
 Q_A[t]=Q_A[t-1]+\alpha(Action)(R-Q_A[t-1])+\gamma(1-Action)(Q0-Q_A[t-1])
 $$
 
-![custom_plot.jpg](examples/Cognetive_RL/custom_plot.jpg)
+![custom_plot.jpg](examples/Cognetive_RL/custom_plot.svg)
 In this plot, the estimation of Bayesian Hierarchical, Simple Bayesian, and the ground truth are displayed by blue, pink, and green colors, respectively.  
 ### Damped Forced Harmonic Oscillator
 
@@ -86,7 +86,7 @@ $$
 
 The model was able to recover different structures per individual, even when the force was zero for some. This was achieved by recovering multimodal distributions for the corresponding coefficients.
 
-![custom_plot.jpg](examples/Damped_Forced_Harmonic_Oscillator/custom_plot.jpg)
+![custom_plot.jpg](examples/Damped_Forced_Harmonic_Oscillator/custom_plot.svg)
 ### Fitz Hugh–Nagumo Model
 
 We also implemented this method on data governed by the Fitz Hugh–Nagumo model. This system is a classic example studied by SINDy.
@@ -99,7 +99,7 @@ $$
 \dot{w}=a b_0 + a b_1 v-a w
 $$
   
-![custom_plot.jpg](examples/Fitz_Hugh_Nagumo/custom_plot.jpg)
+![custom_plot.jpg](examples/Fitz_Hugh_Nagumo/custom_plot.svg)
 ### Lotka Volterra
 
 As another application, we used this approach to recover the dynamics of a predator-prey system with more than one prey or predator species.
@@ -112,7 +112,7 @@ $$
 \dot{Y}=\delta XY -\gamma Y
 $$
 
-![custom_plot.jpg](examples/Lotka_Volterra/custom_plot.jpg)
+![custom_plot.jpg](examples/Lotka_Volterra/custom_plot.svg)
 ---  
 
 ### RLC Circuit
@@ -128,7 +128,7 @@ $$
 
 This section demonstrates the method's ability to accurately identify the governing equations for an electrical system.
 
-![custom_plot.jpg](examples/RLC/0RLC_chk_20250812_0922/custom_plot.jpg)
+![custom_plot.jpg](examples/RLC/custom_plot.svg)
 ## Conclusions
 
 In this research, we provided an approach for data-driven model discovery that accounts for individual differences in governing models. We applied the method to various systems, and the results show that it is capable of recovering not just the mean and standard deviation of coefficient distributions but also their shapes. This enables us to find non-shared or multi-modal structures within a population of individuals. Our approach empowers scientists to build models that can explain differences among individuals.
