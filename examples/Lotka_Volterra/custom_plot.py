@@ -11,7 +11,7 @@ to_plot = [[0,1],[0,3],[1,2],[1,3]]
 xlabel_list = ["$\\dot{x}$ : $x$","$\\dot{x}$ : $x\\cdot y$","$\\dot{y}$ : $y$","$\\dot{y}$ : $x\\cdot y$"]
 
 plot_dict = {"legend":False,"est_color": "blue", "gt_color": "red", "flat_color":"green","pdf_color":"grey",
-             "xlabel_fontsize": 32, "title_fontsize": None,
+             "xlabel_fontsize": 24, "title_fontsize": None,
              "max_y_limit": 40.3,"save_name":"custom_with_pdf","pdf_fill":False,"xlabel_list":xlabel_list}
 
 Custom_plot(generate_pdf, pdf_state=True, ground_truth = True, HB_Est = True, FlatB_Est = True,TABLE = False,

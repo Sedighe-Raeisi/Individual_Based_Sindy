@@ -12,7 +12,7 @@ xlabel_list = ["$\\dot{v}$ : $x$","$\\dot{v}$ : $v$","$\\dot{v}$ : $cos(\\omega 
 xlim=[[-8,0.5],[-2,0.5],[-0.5,2]]
 
 plot_dict = {"legend":True, "est_color": "blue", "gt_color": "red", "flat_color":"green","pdf_color":"black",
-             "xlabel_fontsize": 26, "title_fontsize": None,
+             "xlabel_fontsize": 24, "title_fontsize": None,
              "max_y_limit": 40.3,"save_name":"custom_with_pdf","pdf_fill":False,"xlabel_list":xlabel_list}
 
 Custom_plot(generate_pdf, pdf_state=True, ground_truth = True, HB_Est = True, FlatB_Est = True,TABLE = False,

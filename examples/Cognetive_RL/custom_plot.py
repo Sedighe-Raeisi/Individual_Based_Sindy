@@ -7,10 +7,11 @@ from src.Dynamical_systems_utils.Cognetive_RL.CRL_Data_Gen import gt_utils,realp
 save_dir_prefix = "CRL_chk_"
 
 to_plot = [[0,1],[0,2]]
+xlabel_list = ["$Q_A [t] : R-Q_A [t-1]$", "$Q_A [t] : Q_{A_0}-Q_A [t-1]$"]
 
 plot_dict = {"est_color": "blue", "gt_color": "red", "flat_color":"green","pdf_color":"grey",
              "legend": None, "xlabel_fontsize": 23, "title_fontsize": None,
-             "max_y_limit": 40.3,"save_name":"custom_with_pdf","pdf_fill":False}
+             "max_y_limit": 40.3,"save_name":"custom_with_pdf","pdf_fill":False,"xlabel_list":xlabel_list}
 
 Custom_plot(generate_pdf, pdf_state=True, ground_truth = True, HB_Est = True, FlatB_Est = True,TABLE = False,
             gt_utils=gt_utils, realparame2gtarray=realparame2gtarray, save_dir_prefix=save_dir_prefix,

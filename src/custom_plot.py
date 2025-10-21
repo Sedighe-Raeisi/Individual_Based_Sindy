@@ -23,8 +23,8 @@ def Custom_plot(generate_pdf, ground_truth = True, HB_Est = True, FlatB_Est = Tr
     # plt.rcParams["font.family"] = "serif"
     # plt.rcParams["font.serif"] = ["Times New Roman"]
     # plt.rcParams['text.usetex'] = True
-    plt.rcParams['mathtext.fontset'] = 'stix'
-    plt.rcParams['font.family'] = 'STIXGeneral'
+    # plt.rcParams['mathtext.fontset'] = 'stix'
+    # plt.rcParams['font.family'] = 'STIXGeneral'
 
 
     # Add an explicit setting for the axes label font properties if needed
