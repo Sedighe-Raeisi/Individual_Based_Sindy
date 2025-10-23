@@ -1,8 +1,8 @@
 <img src="Figs/logo2.jpg" width="45%" alt="logo" style="float: left; margin-right: 20px;" />  
 
-# Individual-Based Model Discovery with Hierarchical Bayesian SINDy   
+**Individual-Based Model Discovery with Hierarchical Bayesian SINDy**  
 
-
+# Automated discovery of structural differences in dynamical systems
 
 ## Abstract
 
