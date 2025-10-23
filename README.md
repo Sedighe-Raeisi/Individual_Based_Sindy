@@ -67,7 +67,7 @@ In this section, we show the implementation of this method on different dynamica
 As the first example, we implemented this method on q-values from different synthetic participants in a cognitive two-bandit task experiment.
 
 $$
-Q_A[t]=Q_A[t-1]+\alpha(Action)(R-Q_A[t-1])+\gamma(1-Action)(Q0-Q_A[t-1])
+Q_A[t]=Q_A[t-1]+\alpha(Action)(R-Q_A[t-1])+\gamma(1-Action)(Q_{A_0}-Q_A[t-1])
 $$
 
 ![custom_plot.jpg](examples/Cognetive_RL/custom_plot.svg)
@@ -81,7 +81,7 @@ $$
 $$
 
 $$
-\dot{v}=-\frac{k}{m}x-\frac{c}{m}v+\frac{F}{m}\cos{\omega t}
+\dot{v}=-\frac{k}{m}x-\frac{c}{m}v+\frac{F}{m}\cos{\omega\cdot t}
 $$
 
 The model was able to recover different structures per individual, even when the force was zero for some. This was achieved by recovering multimodal distributions for the corresponding coefficients.
@@ -105,11 +105,11 @@ $$
 As another application, we used this approach to recover the dynamics of a predator-prey system with more than one prey or predator species.
 
 $$
-\dot{X}=\alpha X-\beta XY
+\dot{x}=\alpha x-\beta xy
 $$
 
 $$
-\dot{Y}=\delta XY -\gamma Y
+\dot{y}=\delta xy -\gamma y
 $$
 
 ![custom_plot.jpg](examples/Lotka_Volterra/custom_plot.svg)
