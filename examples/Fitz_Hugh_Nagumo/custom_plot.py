@@ -11,8 +11,8 @@ to_plot = [[1,0],[1,1],[1,2]]
 xlabel_list = ["$\\dot{w}$ : $\\text{Const.}$","$\\dot{w}$ : $v$","$\\dot{w}$ : $w$"]
 
 plot_dict = {"legend":True, "est_color": "blue", "gt_color": "red", "flat_color":"green","pdf_color":"black",
-             "xlabel_fontsize": 21, "title_fontsize": None,
-             "max_y_limit": 40.3,"plot_name":"custom_FHN","pdf_fill":False,"xlabel_list":xlabel_list}
+             "xlabel_fontsize": 24, "title_fontsize": None,
+             "max_y_limit": 40.3,"plot_name":"FHN_plot","pdf_fill":False,"xlabel_list":xlabel_list}
 
 Custom_plot(generate_pdf, pdf_state=True, ground_truth = True, HB_Est = True, FlatB_Est = True,TABLE = False,
             gt_utils=gt_utils, realparame2gtarray=realparame2gtarray, save_dir_prefix=save_dir_prefix,

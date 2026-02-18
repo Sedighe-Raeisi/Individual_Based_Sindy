@@ -446,4 +446,3 @@ def plot_all_traj(save_path,gt_utils,realparame2gtarray, true_params_file_str, s
     plt.tight_layout()
     plt.savefig(os.path.join(save_path,f"all_traj_plot_noise{noise_level}.jpg"))
     plt.show()
-

@@ -1,7 +1,7 @@
 import numpy as np
 
 class gen_param:
-    def __init__(self, N_param, a_V = None, a_mean = None, a_std = None, zero_peak_portion = None, zero_epsilon = 0.001,
+    def __init__(self, N_param, a_V = None, a_mean = None, a_std = None, zero_peak_portion = None, zero_epsilon = 0.01,
                  secondpeak_posrtion = None, secondpeak_mean = None, secondpeak_std = None):
         self.N_param = N_param
         self.a_V = a_V

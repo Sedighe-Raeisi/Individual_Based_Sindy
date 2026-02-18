@@ -8,15 +8,15 @@ from src.flat_mcmc_utils import run_mcmc
 from src.Dynamical_systems_utils.Lotka_Volterra.Lotka_Volterra import mix_data,gt_utils,realparame2gtarray, generate_pdf
 from src.flat_plot import plt_mcmc
 print("---------------------- parameter defining ------------------------")
-NUM_WARMUP = 100
-NUM_CHAINS = 1
-NUM_SAMPLES = 500
+NUM_WARMUP = 3000
+NUM_CHAINS = 3
+NUM_SAMPLES = 1000
 NUM_BATCH_SAMPLES = 1
 root_path = os.getcwd()
 save_dir_prefix = "LV_chk_"
 model = Flat_HSModel
 
-N_param_set = 10
+N_param_set = 100
 alpha_info = {"alpha_N": 5, "alpha_mean": 1.0, "alpha_std": 0.02}
 beta_info = {"beta_N": 5, "beta_mean": 0.1, "beta_std": 0.02}
 gamma_info = {"gamma_N": 5, "gamma_mean": 1.5, "gamma_std": 0.03}
@@ -28,7 +28,7 @@ w0_info = {"w0_V": 0.5} # initial value for w
 
 # Time info and noise info can remain as before, or adjusted as needed
 t_info = {"t_start": 0, "t_end": 10, "dt": 0.01} # time span
-noise_info = {"noise_std": 0.01} # noise level
+#noise_info = {"noise_std": 0.05} # noise level
 
 # Construct the system_param_dict for FitzHugh-Nagumo
 system_param_dict = {"N_param_set":N_param_set,
@@ -39,7 +39,7 @@ system_param_dict = {"N_param_set":N_param_set,
     "x0_info": {}, # Pass initial conditions
     "y0_info": {}, # Pass initial conditions
     "t_info":{},
-    "noise_info":{"noise_level":0.25}
+    "noise_info":{"noise_level":0.05}
 }
 mode = "run" # or "run"
 print(f"--------------------------- mode = {mode} --------------------------------")

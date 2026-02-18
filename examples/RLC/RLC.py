@@ -2,25 +2,27 @@ import os
 os.environ['PYTHONUNBUFFERED'] = '1'
 os.environ["XLA_FLAGS"] = "--xla_force_host_platform_device_count=64"
 import os.path
-from src.model import MultiTargetMultiEquation_HSModel,TStudent_BHModel
+from src.model import MultiTargetMultiEquation_HSModel,TStudent_BHModel,Double_HSModel
 from src.mcmc_utils import run_mcmc
 from src.plot import plt_mcmc
 from src.Dynamical_systems_utils.RLC_Circuit.RLC import mix_data,gt_utils,realparame2gtarray, generate_pdf
 import pickle
-import os
-from src.plot import plt_mcmc, row_result
-import numpy as np
 
+from src.plot import plt_mcmc, row_result
+from src.overfit_report import path2idata, _generate_overfitting_report
+
+import numpy as np
+#np.random.seed(42)
 print("---------------------- parameter defining ------------------------")
-NUM_WARMUP = 100
-NUM_CHAINS = 1
-NUM_SAMPLES = 500
+NUM_WARMUP = 3000
+NUM_CHAINS = 3
+NUM_SAMPLES = 1000
 NUM_BATCH_SAMPLES = 1
 root_path = os.getcwd()
 save_dir_prefix = "RLC_chk_"
-model = TStudent_BHModel #MultiTargetMultiEquation_HSModel
+model = MultiTargetMultiEquation_HSModel # Double_HSModel
 
-N_param_set = 10
+N_param_set = 100
 # Define parameters for RLC circuit
 L_info = { "L_mean": 1.0, "L_std": 0.005,
            "L_2Posrtion":0.5 ,"L_2mean":4.0 , "L_2std":0.005}
@@ -34,7 +36,7 @@ i0_info = {"i0_V": 0.0}
 
 # Construct the system_param_dict for FitzHugh-Nagumo
 system_param_dict = {"N_param_set":N_param_set,"L_info":L_info, "R_info":R_info, "C_info":C_info, "V_in_info":V_in_info,
-                     "q0_info":q0_info, "i0_info":i0_info, "t_info":{}, "noise_info":{"noise_level":0.25}}
+                     "q0_info":q0_info, "i0_info":i0_info, "t_info":{}, "noise_info":{"noise_level":0.05}}
 
 mode = "run" # or "run" or "plot" or "row_plot"
 print(f"--------------------------- mode = {mode} --------------------------------")
@@ -45,6 +47,13 @@ if mode == "run":
                  root_path = root_path, save_dir_prefix = save_dir_prefix,
                  program_state = "start", model = model,
                  display_svi = True, mix_data = mix_data, gt_utils = gt_utils)
+     
+    print("**************** Evaluation of model based on LOO metric for overfit *******************")
+    hb_save_dir_prefix = "RLC_chk_"
+    root_path = os.getcwd()
+    idata = path2idata(root_path,hb_save_dir_prefix,scaler=None)
+    _generate_overfitting_report(idata,model)            
+    
 elif mode == "row_plot":
     to_plot = [[1,0],[1,1],[1,2]]
 

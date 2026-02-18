@@ -77,7 +77,7 @@ class HarmonicOscillator:
             dv_dt = -self.k / self.m * results[0] - self.c / self.m * results[1] + self.F0 / self.m * np.cos(
                 self.omega * t_eval)
 
-        xnoise_scale = np.std(results[0]) * noise_level
+        xnoise_scale = np.std(results[0])* noise_level
         vnoise_scale = np.std(results[1]) * noise_level
 
         x = results[0] + np.random.normal(0, xnoise_scale, len(t_eval))

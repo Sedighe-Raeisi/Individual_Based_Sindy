@@ -9,7 +9,7 @@ from src.Dynamical_systems_utils.Damped_Oscillator.DampedForced_HO import mix_da
 from src.plot import plt_mcmc, row_result
 from src.overfit_report import path2idata, _generate_overfitting_report
 import numpy as np
-#np.random.seed(42)
+np.random.seed(42)
 
 
 print("---------------------- parameter defining ------------------------")
@@ -29,7 +29,7 @@ F0_info = {"F0_mean":0.5, "F0_std":0.1, "F_zero_portion":0.3}
 omega_info = {"omega_V":1.5}
 
 system_param_dict = {"N_param_set":N_param_set, "m_info":m_info, "k_info":k_info, "c_info":c_info, "F0_info":F0_info, "omega_info":omega_info,
-                     "x0_info":{}, "v0_info":{}, "t_info":{}, "noise_info":{"noise_level":0.1}}
+                     "x0_info":{}, "v0_info":{}, "t_info":{}, "noise_info":{"noise_level":0.05}}
 
 mode = "run" #"plot" or "run" or "row_plot"
 print(f"--------------------------- mode = {mode} --------------------------------")

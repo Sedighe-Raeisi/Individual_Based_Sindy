@@ -1,5 +1,5 @@
 
-from src.model import Double_HSModel,MultiTargetMultiEquation_HSModel
+from src.model import Double_HSModel, MultiTargetMultiEquation_HSModel
 from src.overfit_report import path2idata, _generate_overfitting_report
 from src.compare import compare_model
 import os

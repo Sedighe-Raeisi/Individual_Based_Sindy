@@ -10,7 +10,7 @@ print("**************** Evaluation of model based on LOO metric for overfit ****
 hb_save_dir_prefix = "LV_chk_"
 root_path = os.getcwd()
 idata = path2idata(root_path,hb_save_dir_prefix,scaler="scale")
-_generate_overfitting_report(idata,MultiTargetMultiEquation_HSModel)
+_generate_overfitting_report(idata,Double_HSModel)
 
 print("************ Model Comparison Evaluation ************")
 compare_model(hb_save_dir_prefix)
