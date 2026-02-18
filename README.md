@@ -86,7 +86,7 @@ $$
 
 The model was able to recover different structures per individual, even when the force was zero for some. This was achieved by recovering multimodal distributions for the corresponding coefficients.
 
-![custom_plot.jpg](examples/Damped_Forced_Harmonic_Oscillator/custom_plot.svg)
+![custom_plot.jpg](examples/Damped_Oscillator/custom_plot.svg)
 ### Fitz Hugh–Nagumo Model
 
 We also implemented this method on data governed by the Fitz Hugh–Nagumo model. This system is a classic example studied by SINDy.
@@ -139,7 +139,7 @@ In this research, we provided an approach for data-driven model discovery that a
 <table>
   <tr>
     <td width="20%" style="text-align: center; vertical-align: middle;"><img src="examples/Cognetive_RL/CRL_chk_20250812_1556/dist_plot.jpg" style="height: 300px; width: auto; object-fit: contain;" alt="Plot 1"></td>
-    <td width="20%" style="text-align: center; vertical-align: middle;"><img src="examples/Damped_Forced_Harmonic_Oscillator/DFHO_chk_20250808_1320/dist_plot.jpg" style="height: 300px; width: auto; object-fit: contain;" alt="Plot 2"></td>
+    <td width="20%" style="text-align: center; vertical-align: middle;"><img src="examples/Damped_Oscillator/DFHO_chk_20250808_1320/dist_plot.jpg" style="height: 300px; width: auto; object-fit: contain;" alt="Plot 2"></td>
     <td width="20%" style="text-align: center; vertical-align: middle;"><img src="examples/Fitz_Hugh_Nagumo/FHN_chk_20250808_1320/dist_plot.jpg" style="height: 300px; width: auto; object-fit: contain;" alt="Plot 3"></td>
     <td width="20%" style="text-align: center; vertical-align: middle;"><img src="examples/Lotka_Volterra/LV_chk_20250812_1022/dist_plot.jpg" style="height: 300px; width: auto; object-fit: contain;" alt="Plot 4"></td>
     <td width="20%" style="text-align: center; vertical-align: middle;"><img src="examples/RLC/RLC_chk_20250812_0922/dist_plot.jpg" style="height: 300px; width: auto; object-fit: contain;" alt="Plot 5"></td>
