@@ -2,20 +2,21 @@ import os
 os.environ['PYTHONUNBUFFERED'] = '1'
 os.environ["XLA_FLAGS"] = "--xla_force_host_platform_device_count=64"
 from src.custom_plot import Custom_plot
-from src.Dynamical_systems_utils.RLC_Circuit.RLC import gt_utils,realparame2gtarray,generate_pdf
+from src.Dynamical_systems_utils.Damped_Oscillator.DampedForced_HO import gt_utils,realparame2gtarray,generate_pdf
 
 
-save_dir_prefix = "RLC_chk_"
+save_dir_prefix = "HO_chk_"
 
-to_plot = [[1,0],[1,1],[1,2]]
-xlabel_list = ["$\\dot{i}$ : $\\text{Const.}$","$\\dot{i}$ : $q$","$\\dot{i}$ : $i$"]
+to_plot = [[1,1],[1,2],[1,3]]
+xlabel_list = ["$\\dot{v}$ : $x$","$\\dot{v}$ : $v$","$\\dot{v}$ : $cos(\\omega \\cdot t)$"]
+xlim=[[-8,0.5],[-2,0.5],[-0.5,2]]
 
 plot_dict = {"legend":True, "est_color": "blue", "gt_color": "red", "flat_color":"green","pdf_color":"black",
              "xlabel_fontsize": 24, "title_fontsize": None,
-             "max_y_limit": 40.3,"plot_name":"custom_RLC","pdf_fill":False,"xlabel_list":xlabel_list}
+             "max_y_limit": 40.3,"plot_name":"HO_plot","pdf_fill":False,"xlabel_list":xlabel_list}
 
 Custom_plot(generate_pdf, pdf_state=True, ground_truth = True, HB_Est = True, FlatB_Est = True,TABLE = False,
             gt_utils=gt_utils, realparame2gtarray=realparame2gtarray, save_dir_prefix=save_dir_prefix,
            fighigth=3, figwidth=12, n_rows=1, n_cols=3,
-           scaler=None, to_plot=to_plot, plot_dict=plot_dict)
+           scaler=None, to_plot=to_plot, plot_dict=plot_dict,xlim=xlim)
 

@@ -5,7 +5,7 @@ import os.path
 from src.model import MultiTargetMultiEquation_HSModel
 from src.mcmc_utils import run_mcmc
 from src.plot import plt_mcmc
-from src.Dynamical_systems_utils.FitzHugh_Nagumo.FitzHughNagumo import mix_data,gt_utils,realparame2gtarray, generate_pdf
+from src.Dynamical_systems_utils.Lotka_Volterra.Lotka_Volterra import mix_data,gt_utils,realparame2gtarray, generate_pdf
 import pickle
 import os
 from src.plot import plt_mcmc, row_result
@@ -17,33 +17,24 @@ NUM_CHAINS = 1
 NUM_SAMPLES = 500
 NUM_BATCH_SAMPLES = 1
 root_path = os.getcwd()
-save_dir_prefix = "FHN_chk_"
+save_dir_prefix = "LV_chk_"
 model = MultiTargetMultiEquation_HSModel
 
 N_param_set = 10
-a_info = {"a_N":10, "a_mean": 0.5, "a_std":0.1}
-b0_info = {"b0_N":10, "b0_mean": 2.0, "b0_std":0.2}
-b1_info = {"b1_mean": 2.0, "b1_std":0.1}
-I_info = {"I_mean": 1.5, "I_std":0.1}
+alpha_info = {"alpha_N": 5, "alpha_mean": 1.0, "alpha_std": 0.02}
+beta_info = {"beta_N": 5, "beta_mean": 0.1, "beta_std": 0.02}
+gamma_info = {"gamma_N": 5, "gamma_mean": 1.5, "gamma_std": 0.03}
+delta_info = {"delta_N": 5, "delta_mean": 0.75, "delta_std": 0.03}
 
-# Initial conditions (v0, w0) can be fixed or sampled from a distribution
-# For initial testing, we fix them.
-v0_info = {"v0_V": 0.5} # initial value for v
-w0_info = {"w0_V": 0.5} # initial value for w
-
-# Time info and noise info can remain as before, or adjusted as needed
-t_info = {"t_start": 0, "t_end": 10, "dt": 0.01}
-noise_info = {"noise_std": 0.01}
-
-# Construct the system_param_dict for FitzHugh-Nagumo
+# Construct the system_param_dict for Lotka-Volterra
 system_param_dict = {"N_param_set":N_param_set,
-    "a_info": a_info,
-    "b0_info": b0_info,
-    "b1_info": b1_info,
-    "I_info": I_info,
-    "v0_info": v0_info, # Pass initial conditions
-    "w0_info": w0_info, # Pass initial conditions
-    "t_info": t_info,
+    "alpha_info": alpha_info,
+    "beta_info": beta_info,
+    "gamma_info": gamma_info,
+    "delta_info": delta_info,
+    "x0_info": {}, # Pass initial conditions
+    "y0_info": {}, # Pass initial conditions
+    "t_info":{},
     "noise_info":{"noise_level":0.25}
 }
 mode = "run" # or "run" or "plot" or "row_plot"
@@ -54,9 +45,9 @@ if mode == "run":
                  NUM_WARMUP=NUM_WARMUP, NUM_CHAINS=NUM_CHAINS, NUM_SAMPLES=NUM_SAMPLES, NUM_BATCH_SAMPLES=NUM_BATCH_SAMPLES,
                  root_path = root_path, save_dir_prefix = save_dir_prefix,
                  program_state = "start", model = model,
-                 display_svi = True, mix_data = mix_data, gt_utils = gt_utils)
+                 display_svi = True, mix_data = mix_data, gt_utils = gt_utils,scaler="scale",mcmc_seed=42)
 elif mode == "row_plot":
-    to_plot = [[1,0],[1,1]]
+    to_plot = [[0, 1], [0, 3], [1, 2], [1, 3]]
 
 
     true_params_file_str = f"chk_GT_Data.pkl"
@@ -65,7 +56,7 @@ elif mode == "row_plot":
     row_result(save_path, gt_utils, realparame2gtarray, true_params_file_str,
                fighigth=4, figwidth=18,
                n_rows=1, n_cols=2,
-               scaler=None, to_plot=to_plot, plot_dict=plot_dict)
+               scaler="scale", to_plot=to_plot, plot_dict=plot_dict)
 
 elif mode=="plot":
 
@@ -74,4 +65,4 @@ elif mode=="plot":
 
     plt_mcmc(save_path, gt_utils, realparame2gtarray, generate_pdf, true_params_file_str,
              stop_subplot_n=None, figlength=3,
-             complex_pdf=True, x_range=None, scaler=None)
+             complex_pdf=True, x_range=None, scaler="scale")

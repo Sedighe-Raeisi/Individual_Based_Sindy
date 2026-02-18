@@ -38,7 +38,7 @@ def MultiTargetMultiEquation_HSModel(xx, yy):
     c_sq_μ = numpyro.sample("c_sq_μ",InverseGamma(slab_shape_nu / 2, slab_shape_nu / 2 * slab_shape_s**2),sample_shape =(n_IDs,n_features,n_targets))
     μ_coef = _sample_reg_horseshoe(τ_μ, c_sq_μ,( n_IDs,n_features,n_targets),"μ_coef")
     print(f"μ_coef.shape = {μ_coef.shape}")
-    σ_coef = numpyro.sample("σ_coef", dist.HalfNormal(10.),sample_shape =(n_IDs,n_features,n_targets))
+    σ_coef = numpyro.sample("σ_coef", dist.HalfNormal(1.),sample_shape =(n_IDs,n_features,n_targets))
 
 
     with numpyro.plate("plate_targets", n_targets):
@@ -120,38 +120,189 @@ def Flat_HSModel(xx, yy):
 
 
 
+#################################################################
+import numpyro
+import numpyro.distributions as dist
+from numpyro.distributions import HalfCauchy, InverseGamma, Normal
+import jax.numpy as jnp
+# Assuming gen_param and other necessary imports are available in the execution environment
 
 
 
 
+################################### Normal Model ########################
+def MultiTargetMultiEquation_Normal(xx, yy):
+    n_targets = yy.shape[1]
+
+    n_IDs = xx.shape[0]
+    n_features = xx.shape[1]
+    n_obs = xx.shape[2]
+
+    μ_coef = numpyro.sample("μ_coef", dist.Normal(0, 10.), sample_shape=(n_IDs, n_features, n_targets))
+    σ_coef = numpyro.sample("σ_coef", dist.HalfNormal(10.), sample_shape=(n_IDs, n_features, n_targets))
+
+    with numpyro.plate("plate_targets", n_targets):
+        with numpyro.plate("plate_features", n_features):
+            with numpyro.plate("plate_Indv", n_IDs):
+                coef = numpyro.sample("coef", dist.Normal(μ_coef, σ_coef))
+
+    y_est = jnp.einsum('ifo,ift->ito', xx, coef)
+    # for each target we should consider different noise
+    noise = numpyro.sample("noise", dist.HalfNormal(1), sample_shape=(n_targets,))
+    noise = jnp.expand_dims(jnp.expand_dims(noise, axis=1), axis=0)
+    noise = jnp.broadcast_to(noise, (n_IDs, n_targets, n_obs))
+
+    numpyro.sample("obs", dist.Normal(y_est, noise), obs=yy)
+
+########################## BH Model both μ , σ ############################
+############################## Horse-shoe dist ################################
+def _sample_reg_halfhorseshoe(tau: float, c_sq: float, shape: tuple[int, ...],name = "betaH"):
+
+    lamb = numpyro.sample(name+"_λ", HalfCauchy(1.0), sample_shape=shape)
+    lamb_squiggle = jnp.sqrt(c_sq) * lamb / jnp.sqrt(c_sq + tau**2 * lamb**2)
+    betaH = numpyro.sample(
+        name,
+        dist.HalfNormal(jnp.sqrt(lamb_squiggle**2 * tau**2)),sample_shape = shape
+    )
+    return betaH
+############################## Horse-shoe Model ################################
+def Double_HSModel(xx, yy):
+    n_targets = yy.shape[1]
+
+    n_IDs = xx.shape[0]
+    n_features = xx.shape[1]
+    n_obs = xx.shape[2]
+
+    slab_shape_nu = 4
+    slab_shape_s = 2
+    noise_hyper_lambda = 1
+    sparsity_coef_tau0 = 0.1
+    print(f"n_features = {n_features}")
+    # sample the horseshoe hyperparameters.
+    #
+    with numpyro.plate("plate_targets", n_targets):
+      with numpyro.plate("plate_features", n_features):
+        with numpyro.plate("plate_Indv", n_IDs):
+            τ_μ = numpyro.sample("τ_μ", HalfCauchy(sparsity_coef_tau0) )
+            c_sq_μ = numpyro.sample("c_sq_μ",InverseGamma(slab_shape_nu / 2, slab_shape_nu / 2 * slab_shape_s**2))
+            μ_coef = _sample_reg_horseshoe(τ_μ, c_sq_μ,(),"μ_coef")
+            print(f"μ_coef.shape = {μ_coef.shape}")
+            σ_coef = _sample_reg_halfhorseshoe(τ_μ, c_sq_μ,(),"σ_coef")
+            print(f"μ_coef.shape = {μ_coef.shape}")
+            print(f"σ_coef.shape = {σ_coef.shape}")
+            coef = numpyro.sample("coef", dist.Normal(μ_coef, σ_coef))
+
+    print(f"coef.shape = {coef.shape}")
+    y_est = jnp.einsum('ifo,ift->ito', xx, coef)
+    # for each target we should consider different noise
+    noise = numpyro.sample("noise", dist.HalfNormal(1),sample_shape=(n_targets,))
+    noise = jnp.expand_dims(jnp.expand_dims(noise, axis=1), axis=0)
+    noise = jnp.broadcast_to(noise, (n_IDs,n_targets,n_obs))
+
+    numpyro.sample("obs", dist.Normal(y_est, noise), obs=yy)
+
+############################## Horse-shoe Model (with Student's t Likelihood) ################################
+def TStudent_BHModel(xx, yy):
+    n_targets = yy.shape[1]
+
+    n_IDs = xx.shape[0]
+    n_features = xx.shape[1]
+    n_obs = xx.shape[2]
+
+    slab_shape_nu = 4
+    slab_shape_s = 2
+    sparsity_coef_tau0 = 0.1
+    print(f"n_features = {n_features}")
+
+    # --- NEW: Degrees of Freedom (nu) for the Student's t-distribution ---
+    # Sampling nu from a wide prior (e.g., Gamma or HalfNormal)
+    # A smaller nu (e.g., < 10) indicates heavier tails and stronger robustness to outliers.
+    # We constrain it to be >= 1 for numerical stability.
+    df_nu = numpyro.sample("df_nu", dist.Gamma(2., 0.1))  # Mean of 20, but with flexibility
+    # Ensure df_nu >= 1 for the StudentT distribution
+    df_nu = jnp.clip(df_nu, 1.0, 100.)
+
+    # sample the horseshoe hyperparameters.
+    τ_μ = numpyro.sample("τ_μ", HalfCauchy(sparsity_coef_tau0), sample_shape=(n_IDs, n_features, n_targets))
+    c_sq_μ = numpyro.sample("c_sq_μ", InverseGamma(slab_shape_nu / 2, slab_shape_nu / 2 * slab_shape_s ** 2),
+                            sample_shape=(n_IDs, n_features, n_targets))
+    μ_coef = _sample_reg_horseshoe(τ_μ, c_sq_μ, (n_IDs, n_features, n_targets), "μ_coef")
+    print(f"μ_coef.shape = {μ_coef.shape}")
+    σ_coef = numpyro.sample("σ_coef", dist.HalfNormal(1.), sample_shape=(n_IDs, n_features, n_targets))
+
+    with numpyro.plate("plate_targets", n_targets):
+        with numpyro.plate("plate_features", n_features):
+            with numpyro.plate("plate_Indv", n_IDs):
+                coef = numpyro.sample("coef", dist.Normal(μ_coef, σ_coef))
+
+    y_est = jnp.einsum('ifo,ift->ito', xx, coef)
+    # for each target we should consider different scale (sigma)
+    noise_scale = numpyro.sample("noise_scale", dist.HalfNormal(1), sample_shape=(n_targets,))
+    noise_scale = jnp.expand_dims(jnp.expand_dims(noise_scale, axis=1), axis=0)
+    noise_scale = jnp.broadcast_to(noise_scale, (n_IDs, n_targets, n_obs))
+
+    # --- CRITICAL CHANGE: Student's t-distribution for the Likelihood ---
+    # dist.StudentT(df, loc, scale)
+    # df = degrees of freedom (df_nu), loc = mean (y_est), scale = noise_scale
+    numpyro.sample("obs", dist.StudentT(df_nu, y_est, noise_scale), obs=yy)
 
 
+############################## Horse-shoe Model ################################
+import numpyro
+import numpyro.distributions as dist
+from numpyro.distributions import HalfCauchy, InverseGamma
+import jax.numpy as jnp
 
 
+# Assume _sample_reg_horseshoe and _sample_reg_halfhorseshoe are defined elsewhere
+# (They are not provided, but the context suggests they sample the coefficients)
 
+############################## Horse-shoe Model ################################
+def Double_tsdtudent(xx, yy):
+    n_targets = yy.shape[1]
 
+    n_IDs = xx.shape[0]
+    n_features = xx.shape[1]
+    n_obs = xx.shape[2]
 
-    ################################### Normal Model ########################
-    def MultiTargetMultiEquation_Normal(xx, yy):
-        n_targets = yy.shape[1]
+    slab_shape_nu = 4
+    slab_shape_s = 2
+    sparsity_coef_tau0 = 0.1
+    # print(f"n_features = {n_features}")
 
-        n_IDs = xx.shape[0]
-        n_features = xx.shape[1]
-        n_obs = xx.shape[2]
+    # --- NEW: Sample the degrees of freedom (df_nu) for the Student's t-distribution ---
+    # Common choice for the prior on degrees of freedom (nu).
+    # This ensures nu > 0 and often concentrates mass on low values (heavy tails).
+    df_nu = numpyro.sample("df_nu", dist.Gamma(3, 0.1))
 
-        μ_coef = numpyro.sample("μ_coef", dist.Normal(0, 10.), sample_shape=(n_IDs, n_features, n_targets))
-        σ_coef = numpyro.sample("σ_coef", dist.HalfNormal(10.), sample_shape=(n_IDs, n_features, n_targets))
+    # sample the horseshoe hyperparameters.
+    #
+    with numpyro.plate("plate_targets", n_targets):
+        with numpyro.plate("plate_features", n_features):
+            with numpyro.plate("plate_Indv", n_IDs):
+                τ_μ = numpyro.sample("τ_μ", HalfCauchy(sparsity_coef_tau0))
+                c_sq_μ = numpyro.sample("c_sq_μ",
+                                        InverseGamma(slab_shape_nu / 2, slab_shape_nu / 2 * slab_shape_s ** 2))
 
-        with numpyro.plate("plate_targets", n_targets):
-            with numpyro.plate("plate_features", n_features):
-                with numpyro.plate("plate_Indv", n_IDs):
-                    coef = numpyro.sample("coef", dist.Normal(μ_coef, σ_coef))
+                # Assuming these functions are defined and sample coefficients
+                μ_coef = _sample_reg_horseshoe(τ_μ, c_sq_μ, (), "μ_coef")
+                σ_coef = _sample_reg_halfhorseshoe(τ_μ, c_sq_μ, (), "σ_coef")
 
-        y_est = jnp.einsum('ifo,ift->ito', xx, coef)
-        # for each target we should consider different noise
-        noise = numpyro.sample("noise", dist.HalfNormal(1), sample_shape=(n_targets,))
-        noise = jnp.expand_dims(jnp.expand_dims(noise, axis=1), axis=0)
-        noise = jnp.broadcast_to(noise, (n_IDs, n_targets, n_obs))
+                coef = numpyro.sample("coef", dist.Normal(μ_coef, σ_coef))
 
-        numpyro.sample("obs", dist.Normal(y_est, noise), obs=yy)
+    # print(f"coef.shape = {coef.shape}")
+    y_est = jnp.einsum('ifo,ift->ito', xx, coef)
+
+    # for each target we should consider different noise
+    # Note: For Student's t, this is the 'scale' parameter, not the standard deviation
+    noise_scale = numpyro.sample("noise_scale", dist.HalfNormal(1), sample_shape=(n_targets,))
+    noise_scale = jnp.expand_dims(jnp.expand_dims(noise_scale, axis=1), axis=0)
+    noise_scale = jnp.broadcast_to(noise_scale, (n_IDs, n_targets, n_obs))
+
+    # --- CRITICAL CHANGE: Student's t-distribution for the Likelihood ---
+    # The Student's T distribution is robust to outliers, as low degrees of
+    # freedom (df_nu) allow for heavier tails than the Normal distribution.
+    # Arguments: df, loc (mean), scale
+    numpyro.sample("obs", dist.StudentT(df_nu, y_est, noise_scale), obs=yy)
+
 

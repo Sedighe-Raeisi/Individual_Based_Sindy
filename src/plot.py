@@ -146,168 +146,6 @@ def plt_mcmc(save_path,gt_utils,realparame2gtarray, generate_pdf, true_params_fi
     plt.savefig(os.path.join(save_path,'dist_plot.jpg'))
     plt.show()
 
-def plot_scatter_gt_xy(save_path,gt_utils,realparame2gtarray, true_params_file_str, stop_subplot_n = None,width_scale = 4, hight_scale = 4):
-    """
-
-    :param save_path:
-    :param gt_utils:
-    :param realparame2gtarray: converts a dic of gt to array of gt
-    :param generate_pdf: the function that is used to generate the arrays of pdf distributions
-    :param true_params_file_str: the name of the file that contains true values or ground truth values
-    :param stop_subplot_n: if we want to have a few number of relevent sub-plot in figure
-    :param width_scale: scale of the plot for width which is used in fig_size
-    :param hight_scale: scale of the plot for hight which is used in fig_size
-    :param complex_pdf: if we have coef which is computed from some basic coef of the system like k/m
-    :param x_range: list of the form [x_min,y_max]
-    :return:
-    """
-    true_params_filename = os.path.join(save_path, true_params_file_str)
-    with open(true_params_filename, 'rb') as f:
-        X_data, Y_data, true_params = pickle.load(f)
-    gt_coef_array = realparame2gtarray(true_params)
-    gt_dict = gt_utils(true_params)
-    eqs = gt_dict['eqs']
-    coef_names = gt_dict['coef_names']
-    gt_coef = gt_dict['gt_coef']
-    # Shape of X_data: (n_indv, n_coef, n_obs)
-    # Shape of Y_data: (n_indv, n_eq, n_obs)
-    N_Eqs = Y_data.shape[1]
-    N_Coef = X_data.shape[1]
-    n_plot_cols = stop_subplot_n if stop_subplot_n else N_Coef
-    fig, axes = plt.subplots(N_Eqs, n_plot_cols,
-                             figsize=(width_scale * n_plot_cols, hight_scale * N_Eqs))  # 2 rows, 3 columns
-
-    for eq_i in range(N_Eqs):
-
-        for coef_i in range(n_plot_cols):  # Loop over coefficients
-            if N_Eqs == 1:
-                axi = axes[coef_i]
-            else:
-                axi = axes[ eq_i,coef_i]
-            print(f'sub plot {coef_i} is created')
-            axi.scatter(X_data[:,coef_i,:],Y_data[:,eq_i,:], alpha=0.5, s=10)
-# Add titles and labels for clarity
-            axi.set_title(f'Eq : {eqs[eq_i]}')
-            axi.set_xlabel(f'Coef: {coef_names[coef_i]} ')
-            axi.set_ylabel(f'{eqs[eq_i].split("=")[0]}')
-
-    # Adjust layout to prevent overlapping titles/labels
-    plt.tight_layout()
-    plt.savefig(os.path.join(save_path,"traj_scatter_plot.jpg"))
-    plt.show() # Display the plot
-
-def plot_all_traj(save_path,gt_utils,realparame2gtarray, true_params_file_str, stop_subplot_n = None,width_scale = 4, hight_scale = 4):
-    """
-
-    :param save_path:
-    :param gt_utils:
-    :param realparame2gtarray: converts a dic of gt to array of gt
-    :param generate_pdf: the function that is used to generate the arrays of pdf distributions
-    :param true_params_file_str: the name of the file that contains true values or ground truth values
-    :param stop_subplot_n: if we want to have a few number of relevent sub-plot in figure
-    :param width_scale: scale of the plot for width which is used in fig_size
-    :param hight_scale: scale of the plot for hight which is used in fig_size
-    :param complex_pdf: if we have coef which is computed from some basic coef of the system like k/m
-    :param x_range: list of the form [x_min,y_max]
-    :return:
-    """
-    true_params_filename = os.path.join(save_path, true_params_file_str)
-    with open(true_params_filename, 'rb') as f:
-        X_data, Y_data, true_params = pickle.load(f)
-    gt_coef_array = realparame2gtarray(true_params)
-    gt_dict = gt_utils(true_params)
-    eqs = gt_dict['eqs']
-    coef_names = gt_dict['coef_names']
-    gt_coef = gt_dict['gt_coef']
-    # Shape of X_data: (n_indv, n_coef, n_obs)
-    # Shape of Y_data: (n_indv, n_eq, n_obs)
-    N_Eqs = Y_data.shape[1]
-    N_Coef = X_data.shape[1]
-    N_indv = X_data.shape[0]
-    n_plot_cols = stop_subplot_n if stop_subplot_n else N_Coef
-    fig, axes = plt.subplots(N_Eqs, n_plot_cols,
-                             figsize=(width_scale * n_plot_cols, hight_scale * N_Eqs))  # 2 rows, 3 columns
-
-    for eq_i in range(N_Eqs):
-
-        for coef_i in range(n_plot_cols):  # Loop over coefficients
-            if N_Eqs == 1:
-                axi = axes[coef_i]
-            else:
-                axi = axes[ eq_i,coef_i]
-            print(f'sub plot {coef_i} is created')
-            for traj_i in range(N_indv):
-                axi.scatter(X_data[traj_i,coef_i,:],Y_data[traj_i,eq_i,:], alpha=0.5, s=1)
-# Add titles and labels for clarity
-            axi.set_title(f'Eq : {eqs[eq_i]}')
-            axi.set_xlabel(f'Coef: {coef_names[coef_i]} ')
-            axi.set_ylabel(f'{eqs[eq_i].split("=")[0]}')
-
-    # Adjust layout to prevent overlapping titles/labels
-    plt.tight_layout()
-    plt.savefig(os.path.join(save_path,"all_traj_plot.jpg"))
-    plt.show()
-
-def plot_std(save_path,gt_utils,realparame2gtarray, true_params_file_str, stop_subplot_n = None,width_scale = 4, hight_scale = 4):
-    """
-
-    :param save_path:
-    :param gt_utils:
-    :param realparame2gtarray: converts a dic of gt to array of gt
-    :param generate_pdf: the function that is used to generate the arrays of pdf distributions
-    :param true_params_file_str: the name of the file that contains true values or ground truth values
-    :param stop_subplot_n: if we want to have a few number of relevent sub-plot in figure
-    :param width_scale: scale of the plot for width which is used in fig_size
-    :param hight_scale: scale of the plot for hight which is used in fig_size
-    :param complex_pdf: if we have coef which is computed from some basic coef of the system like k/m
-    :param x_range: list of the form [x_min,y_max]
-    :return:
-    """
-    true_params_filename = os.path.join(save_path, true_params_file_str)
-    with open(true_params_filename, 'rb') as f:
-        X_data, Y_data, true_params = pickle.load(f)
-    gt_coef_array = realparame2gtarray(true_params)
-    gt_dict = gt_utils(true_params)
-    eqs = gt_dict['eqs']
-    coef_names = gt_dict['coef_names']
-    gt_coef = gt_dict['gt_coef']
-    # Shape of X_data: (n_indv, n_coef, n_obs)
-    # Shape of Y_data: (n_indv, n_eq, n_obs)
-    N_Eqs = Y_data.shape[1]
-    N_Coef = X_data.shape[1]
-    N_indv = X_data.shape[0]
-
-
-
-    xstd_s = np.std(X_data,0)
-    ystd_s = np.std(Y_data,0)
-    n_plot_cols = stop_subplot_n if stop_subplot_n else N_Coef
-    fig, axes = plt.subplots(n_plot_cols,N_Eqs,
-                             figsize=(width_scale * n_plot_cols, hight_scale * N_Eqs))  # 2 rows, 3 columns
-    instead_t = np.arange(0,xstd_s.shape[1])
-    for eq_i in range(N_Eqs):
-
-        for coef_i in range(n_plot_cols):  # Loop over coefficients
-            print(f'sub plot {coef_i} is created')
-            if N_Eqs == 1:
-                axi = axes[coef_i]
-            else:
-                axi = axes[coef_i, eq_i]
-            xtarget = xstd_s[coef_i,:]
-            ytarget = ystd_s[eq_i,:]
-            axi.scatter(instead_t, xtarget, alpha=0.5, s=1,label = f"std of {coef_names[coef_i]}")
-            axi.scatter(instead_t, ytarget, alpha=0.5, s=1, label=f"std of {eqs[eq_i].split('=')[0]}")
-
-# Add titles and labels for clarity
-            axi.set_title(f'Coef: {coef_names[coef_i]}')
-            axi.set_xlabel(f'Time')
-            axi.set_ylabel(f'std')
-            axi.legend (loc="upper right")
-
-    # Adjust layout to prevent overlapping titles/labels
-    plt.tight_layout()
-    plt.savefig(os.path.join(save_path,"std_plot.jpg"))
-    plt.show()
 
 
 ############################################ Plot model #######################
@@ -551,3 +389,61 @@ def row_result(save_path, gt_utils, realparame2gtarray, true_params_file_str,
     plt.savefig(os.path.join(save_path, 'row_kde_plot_with_table.jpg'))
     plt.show()
     print("plot run finished")
+
+def plot_all_traj(save_path,gt_utils,realparame2gtarray, true_params_file_str, stop_subplot_n = None,width_scale = 4, hight_scale = 4):
+    """
+
+    :param save_path:
+    :param gt_utils:
+    :param realparame2gtarray: converts a dic of gt to array of gt
+    :param generate_pdf: the function that is used to generate the arrays of pdf distributions
+    :param true_params_file_str: the name of the file that contains true values or ground truth values
+    :param stop_subplot_n: if we want to have a few number of relevent sub-plot in figure
+    :param width_scale: scale of the plot for width which is used in fig_size
+    :param hight_scale: scale of the plot for hight which is used in fig_size
+    :param complex_pdf: if we have coef which is computed from some basic coef of the system like k/m
+    :param x_range: list of the form [x_min,y_max]
+    :return:
+    """
+    true_params_filename = os.path.join(save_path, true_params_file_str)
+    with open(true_params_filename, 'rb') as f:
+        X_data, Y_data, true_params = pickle.load(f)
+
+    system_param_dict_path = os.path.join(save_path, "system_param_dict.pkl")
+    with open(system_param_dict_path, "rb") as f:
+        system_param_dict = pickle.load(f)
+    noise_level = str(system_param_dict["noise_info"]["noise_level"]).split(".")[1]
+    gt_coef_array = realparame2gtarray(true_params)
+    gt_dict = gt_utils(true_params)
+    eqs = gt_dict['eqs']
+    coef_names = gt_dict['coef_names']
+    gt_coef = gt_dict['gt_coef']
+    # Shape of X_data: (n_indv, n_coef, n_obs)
+    # Shape of Y_data: (n_indv, n_eq, n_obs)
+    N_Eqs = Y_data.shape[1]
+    N_Coef = X_data.shape[1]
+    N_indv = X_data.shape[0]
+    n_plot_cols = stop_subplot_n if stop_subplot_n else N_Coef
+    fig, axes = plt.subplots(N_Eqs, n_plot_cols,
+                             figsize=(width_scale * n_plot_cols, hight_scale * N_Eqs))  # 2 rows, 3 columns
+
+    for eq_i in range(N_Eqs):
+
+        for coef_i in range(n_plot_cols):  # Loop over coefficients
+            if N_Eqs == 1:
+                axi = axes[coef_i]
+            else:
+                axi = axes[ eq_i,coef_i]
+            print(f'sub plot {coef_i} is created')
+            for traj_i in range(N_indv):
+                axi.scatter(X_data[traj_i,coef_i,:],Y_data[traj_i,eq_i,:], alpha=0.5, s=1)
+# Add titles and labels for clarity
+            axi.set_title(f'Eq : {eqs[eq_i]}')
+            axi.set_xlabel(f'Coef: {coef_names[coef_i]} ')
+            axi.set_ylabel(f'{eqs[eq_i].split("=")[0]}')
+
+    # Adjust layout to prevent overlapping titles/labels
+    plt.tight_layout()
+    plt.savefig(os.path.join(save_path,f"all_traj_plot_noise{noise_level}.jpg"))
+    plt.show()
+

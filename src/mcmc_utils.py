@@ -16,7 +16,7 @@ def run_mcmc(system_param_dict ,
              model, mix_data , gt_utils,
              root_path = ".", save_dir_prefix = "chk_",
              program_state = "start",
-             display_svi = True, scaler = None ):
+             display_svi = True, scaler = None ,mcmc_seed=0):
 
 
 
@@ -69,7 +69,7 @@ def run_mcmc(system_param_dict ,
 
         print("------------------ MCMC Warmup Starts----------------------")
 
-        master_rng_key = jax.random.PRNGKey(0)
+        master_rng_key = jax.random.PRNGKey(mcmc_seed)
         nuts_kernel = NUTS(model)
         mcmc = MCMC(
             nuts_kernel,

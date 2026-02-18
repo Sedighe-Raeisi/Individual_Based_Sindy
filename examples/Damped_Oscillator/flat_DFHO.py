@@ -1,38 +1,33 @@
-import os.path
 import os
 os.environ['PYTHONUNBUFFERED'] = '1'
 os.environ["XLA_FLAGS"] = "--xla_force_host_platform_device_count=64"
-
+import os.path
 from src.model import Flat_HSModel
 from src.flat_mcmc_utils import run_mcmc
-from src.Dynamical_systems_utils.RLC_Circuit.RLC import mix_data,gt_utils,realparame2gtarray, generate_pdf
+from src.Dynamical_systems_utils.Damped_Oscillator.DampedForced_HO import mix_data,gt_utils,realparame2gtarray, generate_pdf
 from src.flat_plot import plt_mcmc
+
+
 print("---------------------- parameter defining ------------------------")
-NUM_WARMUP = 100
-NUM_CHAINS = 1
-NUM_SAMPLES = 500
+NUM_WARMUP = 2000
+NUM_CHAINS = 3
+NUM_SAMPLES = 1000
 NUM_BATCH_SAMPLES = 1
 root_path = os.getcwd()
-save_dir_prefix = "RLC_chk_"
-model = Flat_HSModel
+save_dir_prefix = "HO_chk_"
+model = Flat_HSModel # The model should be general enough for different systems
 
-N_param_set = 10
-# Define parameters for RLC circuit
-L_info = { "L_mean": 1.0, "L_std": 0.005,
-           "L_2Posrtion":0.5 ,"L_2mean":4.0 , "L_2std":0.005}
+N_param_set = 100
+m_info = {"m_mean":1.0, "m_std":0.2}
+k_info = {"k_mean":2.0, "k_std":0.5}
+c_info = {"c_mean":0.5, "c_std":0.1}
+F0_info = {"F0_mean":0.5, "F0_std":0.1, "F_zero_portion":0.3}
+omega_info = {"omega_V":1.5}
 
-R_info = {"R_mean": 1.0, "R_std":0.01} #,
-          # "R_2Posrtion":0.5 ,"R_2mean":2.0 , "R_2std":0.01}
-C_info = {"C_mean": 0.5, "C_std": 0.01}
-V_in_info = {"V_in_mean": 1.0,"V_in_std":0.03,"V_in_N":3}
-q0_info = {"q0_V": 0.0}
-i0_info = {"i0_V": 0.0}
+system_param_dict = {"N_param_set":N_param_set, "m_info":m_info, "k_info":k_info, "c_info":c_info, "F0_info":F0_info, "omega_info":omega_info,
+                     "x0_info":{}, "v0_info":{}, "t_info":{}, "noise_info":{}}
 
-# Construct the system_param_dict for FitzHugh-Nagumo
-system_param_dict = {"N_param_set":N_param_set,"L_info":L_info, "R_info":R_info, "C_info":C_info, "V_in_info":V_in_info,
-                     "q0_info":q0_info, "i0_info":i0_info, "t_info":{}, "noise_info":{"noise_level":0.25}}
-
-mode = "run" # or "run"
+mode = "run" #"plot" or "run"
 print(f"--------------------------- mode = {mode} --------------------------------")
 if mode == "run":
     print("----------------------- run mcmc_utils -----------------------")
@@ -41,7 +36,6 @@ if mode == "run":
                  root_path = root_path, save_dir_prefix = save_dir_prefix,
                  program_state = "start", model = model,
                  display_svi = True, mix_data = mix_data, gt_utils = gt_utils)
-
 elif mode=="plot":
 
 

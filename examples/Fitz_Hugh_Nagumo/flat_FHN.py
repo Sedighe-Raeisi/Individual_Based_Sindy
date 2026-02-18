@@ -5,19 +5,19 @@ os.environ["XLA_FLAGS"] = "--xla_force_host_platform_device_count=64"
 
 from src.model import Flat_HSModel
 from src.flat_mcmc_utils import run_mcmc
-from src.Dynamical_systems_utils.FitzHughNagumo import mix_data,gt_utils,realparame2gtarray, generate_pdf
+from src.Dynamical_systems_utils.FitzHugh_Nagumo.FitzHughNagumo import mix_data,gt_utils,realparame2gtarray, generate_pdf
 from src.flat_plot import plt_mcmc
 print("---------------------- parameter defining ------------------------")
-NUM_WARMUP = 1000
-NUM_CHAINS = 3
-NUM_SAMPLES = 1000
-NUM_BATCH_SAMPLES = 5
+NUM_WARMUP = 100
+NUM_CHAINS = 1
+NUM_SAMPLES = 500
+NUM_BATCH_SAMPLES = 1
 root_path = os.getcwd()
 save_dir_prefix = "FHN_chk_"
 model = Flat_HSModel
 
 # --- FitzHugh-Nagumo Parameters ---
-N_param_set = 500
+N_param_set = 10
 a_info = {"a_N":10, "a_mean": 0.5, "a_std":0.1}
 b0_info = {"b0_N":10, "b0_mean": 2.0, "b0_std":0.2}
 b1_info = {"b1_mean": 2.0, "b1_std":0.2}
@@ -40,7 +40,7 @@ system_param_dict = {"N_param_set":N_param_set,
     "v0_info": v0_info, # Pass initial conditions
     "w0_info": w0_info, # Pass initial conditions
     "t_info": t_info,
-    "noise_info": noise_info
+    "noise_info":{"noise_level":0.25}
 }
 mode = "run" # or "run"
 print(f"--------------------------- mode = {mode} --------------------------------")

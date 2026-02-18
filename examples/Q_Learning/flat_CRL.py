@@ -5,34 +5,27 @@ os.environ["XLA_FLAGS"] = "--xla_force_host_platform_device_count=64"
 
 from src.model import Flat_HSModel
 from src.flat_mcmc_utils import run_mcmc
-from src.Dynamical_systems_utils.RLC_Circuit.RLC import mix_data,gt_utils,realparame2gtarray, generate_pdf
+from src.Dynamical_systems_utils.Cognetive_RL.CRL_Data_Gen import mix_data,gt_utils,realparame2gtarray, generate_pdf
 from src.flat_plot import plt_mcmc
 print("---------------------- parameter defining ------------------------")
-NUM_WARMUP = 100
-NUM_CHAINS = 1
-NUM_SAMPLES = 500
-NUM_BATCH_SAMPLES = 1
+
+N_param_set = 100
+NUM_WARMUP = 1000
+NUM_CHAINS = 3
+NUM_SAMPLES = 1000
+NUM_BATCH_SAMPLES = 5
 root_path = os.getcwd()
-save_dir_prefix = "RLC_chk_"
+save_dir_prefix = "CRL_chk_"
+
+# Define parameters for RLC circuit
+Alpha_info = { "Alpha_mean": .3, "Alpha_std": 0.02}
+ForgetRate_info = {"ForgetRate_mean": .4, "ForgetRate_std":0.01}
+Session_info = {"n_trials_per_session":100, "n_sessions":2}
+
 model = Flat_HSModel
 
-N_param_set = 10
-# Define parameters for RLC circuit
-L_info = { "L_mean": 1.0, "L_std": 0.005,
-           "L_2Posrtion":0.5 ,"L_2mean":4.0 , "L_2std":0.005}
-
-R_info = {"R_mean": 1.0, "R_std":0.01} #,
-          # "R_2Posrtion":0.5 ,"R_2mean":2.0 , "R_2std":0.01}
-C_info = {"C_mean": 0.5, "C_std": 0.01}
-V_in_info = {"V_in_mean": 1.0,"V_in_std":0.03,"V_in_N":3}
-q0_info = {"q0_V": 0.0}
-i0_info = {"i0_V": 0.0}
-
-# Construct the system_param_dict for FitzHugh-Nagumo
-system_param_dict = {"N_param_set":N_param_set,"L_info":L_info, "R_info":R_info, "C_info":C_info, "V_in_info":V_in_info,
-                     "q0_info":q0_info, "i0_info":i0_info, "t_info":{}, "noise_info":{"noise_level":0.25}}
-
-mode = "run" # or "run"
+system_param_dict = {"N_param_set":N_param_set,"Alpha_info":Alpha_info, "ForgetRate_info":ForgetRate_info, 'Session_info': Session_info} # Updated parameter dictionary
+mode = "plot" #"plot" or "run"
 print(f"--------------------------- mode = {mode} --------------------------------")
 if mode == "run":
     print("----------------------- run mcmc_utils -----------------------")
@@ -41,9 +34,7 @@ if mode == "run":
                  root_path = root_path, save_dir_prefix = save_dir_prefix,
                  program_state = "start", model = model,
                  display_svi = True, mix_data = mix_data, gt_utils = gt_utils)
-
 elif mode=="plot":
-
 
     true_params_file_str = f"chk_GT_Data.pkl"
     gt_save_path = os.path.join(root_path, [file for file in os.listdir(root_path) if file.startswith(save_dir_prefix)][0])
