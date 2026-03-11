@@ -11,3 +11,22 @@ examples/RLC/Result
 *.xml
 *.ml
 
+
+/examples/Damped_Oscillator/DFHO_chk_20250808_1320/
+/examples/Damped_Oscillator/Flat_DFHO_chk_20250808_1320/
+/examples/Damped_Oscillator/Flat_HO_chk_20251215_1052_job2/
+/examples/Damped_Oscillator/HO_chk_20251215_1052_job2/
+
+/examples/Fitz_Hugh_Nagumo/FHN_chk_20251215_1052_job3/
+/examples/Fitz_Hugh_Nagumo/Flat_FHN_chk_20251215_1052_job3/
+/examples/Lotka_Volterra/Flat_LV_chk_20251215_1052_job4/
+/examples/Lotka_Volterra/LV_chk_20250812_1022/
+/examples/Lotka_Volterra/LV_chk_20251215_1052_job4/
+/examples/RLC/Flat_RLC_chk_20251215_1052_job2/
+/examples/RLC/RLC_chk_20251215_1052_job2/
+/src/All_with_pdf.jpg
+/src/Dynamical_systems_utils/DampedForced_HO.py
+/src/Dynamical_systems_utils/FitzHughNagumo.py
+/src/Dynamical_systems_utils/Lotka_Voltera.py
+/src/Dynamical_systems_utils/Nested_RLC.py
+/src/Dynamical_systems_utils/RLC.py
