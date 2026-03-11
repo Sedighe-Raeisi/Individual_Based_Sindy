@@ -24,7 +24,7 @@ dv_obj = device_check()
 dv_obj.check()
 
 print("---------------------- parameter defining ------------------------")
-NUM_WARMUP = 1000
+NUM_WARMUP = 2000
 NUM_CHAINS = 4
 NUM_SAMPLES = 2000
 NUM_BATCH_SAMPLES = 10
