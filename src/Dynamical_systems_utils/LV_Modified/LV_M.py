@@ -9,198 +9,10 @@ import pickle
 # links for parameter selection:
 # perplexity : https://www.perplexity.ai/search/what-parameters-are-to-be-used-yEfZVv4DSyOkJp1WRjf8Sw
 # Gemini : https://gemini.google.com/share/25853a174273
-# class LV_M:
-#     def __init__(self, alpha=1.0, beta=2.0, h=0.5, epsilon=0.5, m=0.3, H=0.05,gradient_targets=True):
-#         # DO NOT CHANGE THESE FUNCTIONS - Per user request
-#         self.alpha, self.beta, self.h = alpha, beta, h
-#         self.epsilon, self.m, self.H = epsilon, m, H
-#         self.gradient_targets = gradient_targets
-#     def _equations(self, t, state):
-#         x, y = state
-#         # Prey Equation with Logistic Growth and Type II Response
-#         dxdt = self.alpha * (1 - x) * x - (self.beta * x * y) / (1 + self.h * x)
-#         # Predator Equation with Type II Response and Quadratic Mortality
-#         dydt = (self.epsilon * self.beta * x * y) / (1 + self.h * x) - self.m * y - self.H * y ** 2
-#         return [dxdt, dydt]
-#
-#     def simulate(self, x0, y0, t_span=(0, 100),N_t = 1000, noise_level=0.01):
-#         sol = solve_ivp(self._equations, t_span, [x0, y0], dense_output=True, method='RK45', rtol=1e-9)
-#         # t_eval = np.linspace(t_span[0], t_span[1], N_t)
-#         dt = (t_span[1]-t_span[0])/N_t
-#         t_eval = np.arange(t_span[0], t_span[1], dt)
-#         results = sol.sol(t_eval)
-#
-#         x = results[0]
-#         y = results[1]
-#
-#         if self.gradient_targets:
-#             # Compute numerical gradients
-#             dx_dt = np.gradient(x, dt)
-#             dy_dt = np.gradient(y, dt)
-#         else:
-#             dxdt = self.alpha * (1 - x) * x - (self.beta * x * y) / (1 + self.h * x)
-#             # Predator Equation with Type II Response and Quadratic Mortality
-#             dydt = (self.epsilon * self.beta * x * y) / (1 + self.h * x) - self.m * y - self.H * y ** 2
-#         xnoise_scale = np.std(results[0]) * noise_level
-#         ynoise_scale = np.std(results[1]) * noise_level
-#
-#         x = results[0] + np.random.normal(0, xnoise_scale, len(t_eval))
-#         y = results[1] + np.random.normal(0, ynoise_scale, len(t_eval))
-#
-#         return {
-#             't': t_eval,
-#             'x': x,
-#             'y': y,
-#             'dx_dt': dx_dt,
-#             'dy_dt': dy_dt
-#         }
-#
-#
-#
-# #########################################################################################
-# ################################## Mix function #########################################
-#
-#
-# def mix_data_LV_M(system_param_dict):
-#
-#     N_param_set = system_param_dict['N_param_set']
-#
-#     # ----- Alpha -----
-#     alpha_V   = system_param_dict['alpha_info']['alpha_V']   if 'alpha_V'   in system_param_dict['alpha_info'] else None
-#     alpha_mean = system_param_dict['alpha_info']['alpha_mean'] if 'alpha_mean' in system_param_dict['alpha_info'] else None
-#     alpha_std  = system_param_dict['alpha_info']['alpha_std']  if 'alpha_std'  in system_param_dict['alpha_info'] else None
-#
-#     # ----- Beta -----
-#     beta_V   = system_param_dict['beta_info']['beta_V']   if 'beta_V'   in system_param_dict['beta_info'] else None
-#     beta_mean = system_param_dict['beta_info']['beta_mean'] if 'beta_mean' in system_param_dict['beta_info'] else None
-#     beta_std  = system_param_dict['beta_info']['beta_std']  if 'beta_std'  in system_param_dict['beta_info'] else None
-#
-#     # ----- h -----
-#     h_V   = system_param_dict['h_info']['h_V']   if 'h_V'   in system_param_dict['h_info'] else None
-#     h_mean = system_param_dict['h_info']['h_mean'] if 'h_mean' in system_param_dict['h_info'] else None
-#     h_std  = system_param_dict['h_info']['h_std']  if 'h_std'  in system_param_dict['h_info'] else None
-#
-#     # ----- epsilon -----
-#     epsilon_V   = system_param_dict['epsilon_info']['epsilon_V']   if 'epsilon_V'   in system_param_dict['epsilon_info'] else None
-#     epsilon_mean = system_param_dict['epsilon_info']['epsilon_mean'] if 'epsilon_mean' in system_param_dict['epsilon_info'] else None
-#     epsilon_std  = system_param_dict['epsilon_info']['epsilon_std']  if 'epsilon_std'  in system_param_dict['epsilon_info'] else None
-#
-#     # ----- m -----
-#     m_V   = system_param_dict['m_info']['m_V']   if 'm_V'   in system_param_dict['m_info'] else None
-#     m_mean = system_param_dict['m_info']['m_mean'] if 'm_mean' in system_param_dict['m_info'] else None
-#     m_std  = system_param_dict['m_info']['m_std']  if 'm_std'  in system_param_dict['m_info'] else None
-#
-#     # ----- H -----
-#     H_V   = system_param_dict['H_info']['H_V']   if 'H_V'   in system_param_dict['H_info'] else None
-#     H_mean = system_param_dict['H_info']['H_mean'] if 'H_mean' in system_param_dict['H_info'] else None
-#     H_std  = system_param_dict['H_info']['H_std']  if 'H_std'  in system_param_dict['H_info'] else None
-#
-#     # ----- Time -----
-#     t_start = system_param_dict['t_info']['t_start'] if 't_start' in system_param_dict['t_info'] else 0
-#     t_end   = system_param_dict['t_info']['t_end']   if 't_end'   in system_param_dict['t_info'] else 100
-#     N_t     = system_param_dict['t_info']['N_t']     if 'N_t'     in system_param_dict['t_info'] else 1000
-#
-#     # ----- Initial Conditions -----
-#     x0 = system_param_dict['x0_info']['x0_V'] if 'x0_V' in system_param_dict['x0_info'] else 0.5
-#     y0 = system_param_dict['y0_info']['y0_V'] if 'y0_V' in system_param_dict['y0_info'] else 0.5
-#
-#     # Storage
-#     X_all = []
-#     Y_all = []
-#
-#     alpha_list, beta_list, h_list = [], [], []
-#     epsilon_list, m_list, H_list = [], [], []
-#
-#     # Parameter generators
-#     alpha_gen   = gen_param(N_param_set, alpha_V, alpha_mean, alpha_std)
-#     beta_gen    = gen_param(N_param_set, beta_V, beta_mean, beta_std)
-#     h_gen       = gen_param(N_param_set, h_V, h_mean, h_std)
-#     epsilon_gen = gen_param(N_param_set, epsilon_V, epsilon_mean, epsilon_std)
-#     m_gen       = gen_param(N_param_set, m_V, m_mean, m_std)
-#     H_gen       = gen_param(N_param_set, H_V, H_mean, H_std)
-#
-#     for _ in range(N_param_set):
-#
-#         alpha   = abs(alpha_gen.gen())
-#         beta    = abs(beta_gen.gen())
-#         h       = abs(h_gen.gen())
-#         epsilon = abs(epsilon_gen.gen())
-#         m       = abs(m_gen.gen())
-#         H       = abs(H_gen.gen())
-#
-#         alpha_list.append(alpha)
-#         beta_list.append(beta)
-#         h_list.append(h)
-#         epsilon_list.append(epsilon)
-#         m_list.append(m)
-#         H_list.append(H)
-#
-#         # Simulate system
-#         model = LV_M(alpha=alpha, beta=beta, h=h,
-#                      epsilon=epsilon, m=m, H=H)
-#
-#         sol = model.simulate(x0=x0, y0=y0,
-#                              t_span=(t_start, t_end),
-#                              N_t=N_t)
-#
-#         x = sol[0]
-#         y = sol[1]
-#
-#         # Compute derivatives analytically (important for regression)
-#         dx_dt = alpha * (1 - x) * x - (beta * x * y) / (1 + h * x)
-#         dy_dt = (epsilon * beta * x * y) / (1 + h * x) - m * y - H * y**2
-#
-#         # Library for SINDy-style regression ???????????????????????????????????????????????????????????????????????????
-#         X = np.array([                             # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-#             np.ones_like(x),
-#             x,
-#             y,
-#             x*y,
-#             x**2,
-#             y**2,
-#             x/(1 + h*x),
-#             (x*y)/(1 + h*x)
-#         ])
-#
-#         Y = np.array([dx_dt, dy_dt])
-#
-#         X_all.append(X)
-#         Y_all.append(Y)
-#
-#     X_all = np.array(X_all)
-#     Y_all = np.array(Y_all)
-#
-#     real_params = {
-#         'alpha_mean': np.mean(alpha_list),
-#         'alpha_std':  np.std(alpha_list),
-#         'beta_mean':  np.mean(beta_list),
-#         'beta_std':   np.std(beta_list),
-#         'h_mean':     np.mean(h_list),
-#         'h_std':      np.std(h_list),
-#         'epsilon_mean': np.mean(epsilon_list),
-#         'epsilon_std':  np.std(epsilon_list),
-#         'm_mean':     np.mean(m_list),
-#         'm_std':      np.std(m_list),
-#         'H_mean':     np.mean(H_list),
-#         'H_std':      np.std(H_list),
-#
-#         'alpha_array':   np.array(alpha_list),
-#         'beta_array':    np.array(beta_list),
-#         'h_array':       np.array(h_list),
-#         'epsilon_array': np.array(epsilon_list),
-#         'm_array':       np.array(m_list),
-#         'H_array':       np.array(H_list),
-#     }
-#
-#     return X_all, Y_all, real_params
-
-
-
-
 
 # --- Provided LV_M class (do not change) ---
 class LV_M:
-    def __init__(self, alpha=1.0, beta=2.0, h=0.5, epsilon=0.5, m=0.3, H=0.05, gradient_targets=True):
+    def __init__(self, alpha=1.0, beta=1.6, h=0.4, epsilon=0.1, m=0.4, H=0.075, gradient_targets=True):
         self.alpha, self.beta, self.h = alpha, beta, h
         self.epsilon, self.m, self.H = epsilon, m, H
         self.gradient_targets = gradient_targets
@@ -542,7 +354,194 @@ def generate_pdf(save_path, pdf_smaple_N=10000, epsilon=0.01):
     # Combine into (2, 11, pdf_sample_N)
     return np.array([coef_0, coef_1])
 
-# --- End of required edits ---
+
+# class LV_M:
+#     def __init__(self, alpha=1.0, beta=2.0, h=0.5, epsilon=0.5, m=0.3, H=0.05,gradient_targets=True):
+#         # DO NOT CHANGE THESE FUNCTIONS - Per user request
+#         self.alpha, self.beta, self.h = alpha, beta, h
+#         self.epsilon, self.m, self.H = epsilon, m, H
+#         self.gradient_targets = gradient_targets
+#     def _equations(self, t, state):
+#         x, y = state
+#         # Prey Equation with Logistic Growth and Type II Response
+#         dxdt = self.alpha * (1 - x) * x - (self.beta * x * y) / (1 + self.h * x)
+#         # Predator Equation with Type II Response and Quadratic Mortality
+#         dydt = (self.epsilon * self.beta * x * y) / (1 + self.h * x) - self.m * y - self.H * y ** 2
+#         return [dxdt, dydt]
+#
+#     def simulate(self, x0, y0, t_span=(0, 100),N_t = 1000, noise_level=0.01):
+#         sol = solve_ivp(self._equations, t_span, [x0, y0], dense_output=True, method='RK45', rtol=1e-9)
+#         # t_eval = np.linspace(t_span[0], t_span[1], N_t)
+#         dt = (t_span[1]-t_span[0])/N_t
+#         t_eval = np.arange(t_span[0], t_span[1], dt)
+#         results = sol.sol(t_eval)
+#
+#         x = results[0]
+#         y = results[1]
+#
+#         if self.gradient_targets:
+#             # Compute numerical gradients
+#             dx_dt = np.gradient(x, dt)
+#             dy_dt = np.gradient(y, dt)
+#         else:
+#             dxdt = self.alpha * (1 - x) * x - (self.beta * x * y) / (1 + self.h * x)
+#             # Predator Equation with Type II Response and Quadratic Mortality
+#             dydt = (self.epsilon * self.beta * x * y) / (1 + self.h * x) - self.m * y - self.H * y ** 2
+#         xnoise_scale = np.std(results[0]) * noise_level
+#         ynoise_scale = np.std(results[1]) * noise_level
+#
+#         x = results[0] + np.random.normal(0, xnoise_scale, len(t_eval))
+#         y = results[1] + np.random.normal(0, ynoise_scale, len(t_eval))
+#
+#         return {
+#             't': t_eval,
+#             'x': x,
+#             'y': y,
+#             'dx_dt': dx_dt,
+#             'dy_dt': dy_dt
+#         }
+#
+#
+#
+# #########################################################################################
+# ################################## Mix function #########################################
+#
+#
+# def mix_data_LV_M(system_param_dict):
+#
+#     N_param_set = system_param_dict['N_param_set']
+#
+#     # ----- Alpha -----
+#     alpha_V   = system_param_dict['alpha_info']['alpha_V']   if 'alpha_V'   in system_param_dict['alpha_info'] else None
+#     alpha_mean = system_param_dict['alpha_info']['alpha_mean'] if 'alpha_mean' in system_param_dict['alpha_info'] else None
+#     alpha_std  = system_param_dict['alpha_info']['alpha_std']  if 'alpha_std'  in system_param_dict['alpha_info'] else None
+#
+#     # ----- Beta -----
+#     beta_V   = system_param_dict['beta_info']['beta_V']   if 'beta_V'   in system_param_dict['beta_info'] else None
+#     beta_mean = system_param_dict['beta_info']['beta_mean'] if 'beta_mean' in system_param_dict['beta_info'] else None
+#     beta_std  = system_param_dict['beta_info']['beta_std']  if 'beta_std'  in system_param_dict['beta_info'] else None
+#
+#     # ----- h -----
+#     h_V   = system_param_dict['h_info']['h_V']   if 'h_V'   in system_param_dict['h_info'] else None
+#     h_mean = system_param_dict['h_info']['h_mean'] if 'h_mean' in system_param_dict['h_info'] else None
+#     h_std  = system_param_dict['h_info']['h_std']  if 'h_std'  in system_param_dict['h_info'] else None
+#
+#     # ----- epsilon -----
+#     epsilon_V   = system_param_dict['epsilon_info']['epsilon_V']   if 'epsilon_V'   in system_param_dict['epsilon_info'] else None
+#     epsilon_mean = system_param_dict['epsilon_info']['epsilon_mean'] if 'epsilon_mean' in system_param_dict['epsilon_info'] else None
+#     epsilon_std  = system_param_dict['epsilon_info']['epsilon_std']  if 'epsilon_std'  in system_param_dict['epsilon_info'] else None
+#
+#     # ----- m -----
+#     m_V   = system_param_dict['m_info']['m_V']   if 'm_V'   in system_param_dict['m_info'] else None
+#     m_mean = system_param_dict['m_info']['m_mean'] if 'm_mean' in system_param_dict['m_info'] else None
+#     m_std  = system_param_dict['m_info']['m_std']  if 'm_std'  in system_param_dict['m_info'] else None
+#
+#     # ----- H -----
+#     H_V   = system_param_dict['H_info']['H_V']   if 'H_V'   in system_param_dict['H_info'] else None
+#     H_mean = system_param_dict['H_info']['H_mean'] if 'H_mean' in system_param_dict['H_info'] else None
+#     H_std  = system_param_dict['H_info']['H_std']  if 'H_std'  in system_param_dict['H_info'] else None
+#
+#     # ----- Time -----
+#     t_start = system_param_dict['t_info']['t_start'] if 't_start' in system_param_dict['t_info'] else 0
+#     t_end   = system_param_dict['t_info']['t_end']   if 't_end'   in system_param_dict['t_info'] else 100
+#     N_t     = system_param_dict['t_info']['N_t']     if 'N_t'     in system_param_dict['t_info'] else 1000
+#
+#     # ----- Initial Conditions -----
+#     x0 = system_param_dict['x0_info']['x0_V'] if 'x0_V' in system_param_dict['x0_info'] else 0.5
+#     y0 = system_param_dict['y0_info']['y0_V'] if 'y0_V' in system_param_dict['y0_info'] else 0.5
+#
+#     # Storage
+#     X_all = []
+#     Y_all = []
+#
+#     alpha_list, beta_list, h_list = [], [], []
+#     epsilon_list, m_list, H_list = [], [], []
+#
+#     # Parameter generators
+#     alpha_gen   = gen_param(N_param_set, alpha_V, alpha_mean, alpha_std)
+#     beta_gen    = gen_param(N_param_set, beta_V, beta_mean, beta_std)
+#     h_gen       = gen_param(N_param_set, h_V, h_mean, h_std)
+#     epsilon_gen = gen_param(N_param_set, epsilon_V, epsilon_mean, epsilon_std)
+#     m_gen       = gen_param(N_param_set, m_V, m_mean, m_std)
+#     H_gen       = gen_param(N_param_set, H_V, H_mean, H_std)
+#
+#     for _ in range(N_param_set):
+#
+#         alpha   = abs(alpha_gen.gen())
+#         beta    = abs(beta_gen.gen())
+#         h       = abs(h_gen.gen())
+#         epsilon = abs(epsilon_gen.gen())
+#         m       = abs(m_gen.gen())
+#         H       = abs(H_gen.gen())
+#
+#         alpha_list.append(alpha)
+#         beta_list.append(beta)
+#         h_list.append(h)
+#         epsilon_list.append(epsilon)
+#         m_list.append(m)
+#         H_list.append(H)
+#
+#         # Simulate system
+#         model = LV_M(alpha=alpha, beta=beta, h=h,
+#                      epsilon=epsilon, m=m, H=H)
+#
+#         sol = model.simulate(x0=x0, y0=y0,
+#                              t_span=(t_start, t_end),
+#                              N_t=N_t)
+#
+#         x = sol[0]
+#         y = sol[1]
+#
+#         # Compute derivatives analytically (important for regression)
+#         dx_dt = alpha * (1 - x) * x - (beta * x * y) / (1 + h * x)
+#         dy_dt = (epsilon * beta * x * y) / (1 + h * x) - m * y - H * y**2
+#
+#         # Library for SINDy-style regression ???????????????????????????????????????????????????????????????????????????
+#         X = np.array([                             # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#             np.ones_like(x),
+#             x,
+#             y,
+#             x*y,
+#             x**2,
+#             y**2,
+#             x/(1 + h*x),
+#             (x*y)/(1 + h*x)
+#         ])
+#
+#         Y = np.array([dx_dt, dy_dt])
+#
+#         X_all.append(X)
+#         Y_all.append(Y)
+#
+#     X_all = np.array(X_all)
+#     Y_all = np.array(Y_all)
+#
+#     real_params = {
+#         'alpha_mean': np.mean(alpha_list),
+#         'alpha_std':  np.std(alpha_list),
+#         'beta_mean':  np.mean(beta_list),
+#         'beta_std':   np.std(beta_list),
+#         'h_mean':     np.mean(h_list),
+#         'h_std':      np.std(h_list),
+#         'epsilon_mean': np.mean(epsilon_list),
+#         'epsilon_std':  np.std(epsilon_list),
+#         'm_mean':     np.mean(m_list),
+#         'm_std':      np.std(m_list),
+#         'H_mean':     np.mean(H_list),
+#         'H_std':      np.std(H_list),
+#
+#         'alpha_array':   np.array(alpha_list),
+#         'beta_array':    np.array(beta_list),
+#         'h_array':       np.array(h_list),
+#         'epsilon_array': np.array(epsilon_list),
+#         'm_array':       np.array(m_list),
+#         'H_array':       np.array(H_list),
+#     }
+#
+#     return X_all, Y_all, real_params
+
+
+
 
 
 
