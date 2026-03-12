@@ -24,14 +24,15 @@ dv_obj = device_check()
 dv_obj.check()
 
 print("---------------------- parameter defining ------------------------")
-NUM_WARMUP = 2000
-NUM_CHAINS = 4
+NUM_WARMUP = 3000
+NUM_CHAINS = 6
 NUM_SAMPLES = 2000
 NUM_BATCH_SAMPLES = 10
 root_path = os.getcwd()
 save_dir_prefix = "LVM_chk_"  # Updated prefix for Modified LV
 model = MultiTargetMultiEquation_HSModel
 
+print(f"NUM_WARMUP = {NUM_WARMUP} , NUM_SAMPLES = {NUM_SAMPLES} , NUM_CHAINS = {NUM_CHAINS}")
 # --- Expanded Parameter Sets for LV_M ---
 N_param_set = 100
 
