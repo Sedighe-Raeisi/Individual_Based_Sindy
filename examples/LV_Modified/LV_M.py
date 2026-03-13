@@ -101,7 +101,7 @@ if mode == "run":
 elif mode == "row_plot":
     # indices adapted for the 11-term library
     # e.g., [0, 2] maps Const vs alpha*x(1-x)
-    to_plot = [[0, 2], [4, 5], [7, 7]]
+    to_plot = [[0, 2], [0, 7], [1, 4],[1,5]]
 
     true_params_file_str = "chk_GT_Data.pkl"
     # Find the directory based on the prefix
