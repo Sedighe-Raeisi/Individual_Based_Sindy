@@ -25,7 +25,7 @@ dv_obj.check()
 
 print("---------------------- parameter defining ------------------------")
 NUM_WARMUP = 3000
-NUM_CHAINS = 6
+NUM_CHAINS = 3
 NUM_SAMPLES = 2000
 NUM_BATCH_SAMPLES = 10
 root_path = os.getcwd()
@@ -48,6 +48,7 @@ N_param_set = 100
 # Standard & Modified LV Parameters
 alpha_info = {"alpha_N": None, "alpha_mean": 1.0, "alpha_std": 0.05, "alpha_V": None}
 beta_info = {"beta_N": None, "beta_mean": 1.7, "beta_std": 0.01, "beta_V": None}
+
 h_info = {"h_N": None, "h_mean": None, "h_std": None, "h_V": 0.4}
 epsilon_info = {"epsilon_N": None, "epsilon_mean": None, "epsilon_std": None, "epsilon_V": 0.1}
 m_info = {"m_N": None, "m_mean": 0.4, "m_std": 0.01, "m_V": None}
