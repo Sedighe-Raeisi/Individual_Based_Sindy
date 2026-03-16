@@ -30,8 +30,10 @@ class LV_M:
         dydt = (self.epsilon * self.beta * x * y) / (1 + self.h * x) - self.m * y - self.H * y ** 2
         return [dxdt, dydt]
 
-    def simulate(self, x0, y0, t_span=(0, 100), N_t=1000, noise_level=0.01):
-        sol = solve_ivp(self._equations, t_span, [x0, y0], dense_output=True, method='RK45', rtol=1e-9)
+    def simulate(self, x0, y0, t_span=(0, 20), N_t=1000, noise_level=0.01):
+        sol = solve_ivp(self._equations, t_span, [x0, y0], dense_output=True, method='RK45'
+                        # , rtol=1e-9
+                        )
         dt = (t_span[1] - t_span[0]) / N_t
         t_eval = np.arange(t_span[0], t_span[1], dt)
         results = sol.sol(t_eval)
@@ -82,7 +84,7 @@ def mix_data_LV_M(system_param_dict):
 
     param_keys = ['alpha', 'beta', 'h', 'epsilon', 'm', 'H', 'delta1', 'delta2', 'delta3', 'delta4']
     gens = {p: gen_param(N_param_set, *get_param_info(p)) for p in param_keys}
-
+    # print(f"gens = {gens}")
     # Store generated lists
     p_lists = {p: [] for p in param_keys}
 
@@ -142,7 +144,7 @@ def mix_data_LV_M(system_param_dict):
             np.ones_like(x),  # 0. H (const)
             # x,  # 1. g1(x) = alpha*x (only the x part)
             x * (1 - x),  # 2. g2(x) = alpha*x(1-x) (the x*(1-x) part)
-            x ** 2 * (1 - x),  # 3. Placeholder for g3(x)
+            x**3, #x ** 2 * (1 - x),  # 3. Placeholder for g3(x)
             y,  # 4. Y (h2)
             y ** 2,  # 5. Y^2 (h3)
             x * y,  # 6. x*Y (base linear interaction f1)
@@ -186,7 +188,7 @@ def gt_utils(real_params):
         "H (const)",  # 0. Constant term h1(Y)
         # "g1(x)=alpha*x",  # 1. Basic prey growth
         "g2(x)=alpha*x(1-x)",  # 2. Logistic prey growth
-        "g3(x)",  # 3. Third prey polynomial placeholder
+        "x**3",  # 3. Third prey polynomial placeholder
         "Y (h2)",  # 4. Linear mortality
         "Y^2 (h3)",  # 5. Quadratic mortality
         "x*Y",  # 6. Linear interaction f1
