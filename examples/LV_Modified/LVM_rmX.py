@@ -56,9 +56,9 @@ H_info = {"H_N": None, "H_mean": 0.075, "H_std": 0.025, "H_V": None}
 
 # Placeholder Deltas (Required for the 11-term library)
 delta1_info = {"delta1_N": None, "delta1_mean": None, "delta1_std": None, "delta1_V": 0.0}
-delta2_info = {"delta2_N": None, "delta2_mean": None, "delta2_std": None, "delta2_V": 0.0}
+delta2_info = {"delta2_N": None, "delta2_mean": None, "delta2_std": None, "delta2_V": 1.0}
 delta3_info = {"delta3_N": None, "delta3_mean": None, "delta3_std": None, "delta3_V": 0.0}
-delta4_info = {"delta4_N": None, "delta4_mean": None, "delta4_std": None, "delta4_V": 0.0}
+delta4_info = {"delta4_N": None, "delta4_mean": None, "delta4_std": None, "delta4_V": 1.0}
 
 # Construct the system_param_dict for LV_M
 system_param_dict = {
