@@ -10,6 +10,7 @@ save_dir_prefix = "LVMx_chk_"
 to_plot = [ [0, 1], [0, 6],[1, 3],[1,4],[1,6]]
 xlabel_list = ["$\\dot{x}$ : $x(1-x)$",
                "$\\dot{x}$ : $-\\frac{xy}{1+hx}$",
+                # "$\\dot{x}$ : $-\\frac{y^2}{1+d_[4] y^2}$",
                "$\\dot{y}$ : $y$",
                "$\\dot{y}$ : $y^2$",
                "$\\dot{y}$ : $\\frac{xy}{1+hx}$"

@@ -5,7 +5,7 @@ from src.custom_plot import Custom_plot
 from src.Dynamical_systems_utils.LV_Modified.LV_M import gt_utils,realparame2gtarray,generate_pdf
 
 
-save_dir_prefix = "LVM_chk_"
+save_dir_prefix = "1_LVM_chk_"
 
 to_plot = [[0, 2], [0, 7], [1, 4],[1,5],[1,7]]
 xlabel_list = ["$\\dot{x}$ : $x(1-x)$",
