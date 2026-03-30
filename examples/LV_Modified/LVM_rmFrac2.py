@@ -13,7 +13,7 @@ from src.device import device_check
 
 # --- Import updated LV_M functions ---
 # Ensure these are the versions that handle the 11-term library
-from src.Dynamical_systems_utils.LV_Modified.LVM_rmFrac import (
+from src.Dynamical_systems_utils.LV_Modified.LVM_rmFrac2 import (
     mix_data_LV_M,  # Using the revised mix function
     gt_utils,
     realparame2gtarray,
