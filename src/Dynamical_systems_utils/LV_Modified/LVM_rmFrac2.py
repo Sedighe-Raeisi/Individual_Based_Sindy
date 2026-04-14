@@ -205,7 +205,7 @@ def gt_utils(real_params):
 
     # dx/dt = alpha*x*(1-x) - beta*xy/(1+hx)
     gt_coef_dx = {name: [0, 0] for name in coef_names}
-    gt_coef_dx["g2(x)=alpha*x(1-x)"] = get_stats(real_params['alpha_array'])
+    gt_coef_dx["x"] = -1*get_stats(real_params['alpha_array'])
     gt_coef_dx["(x*Y)/(1+h*x)"] = [-np.mean(real_params['beta_array']),
                                    np.std(real_params['beta_array'])]  # NOTE: negative sign for consumption
 
