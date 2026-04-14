@@ -29,7 +29,7 @@ NUM_CHAINS = 3
 NUM_SAMPLES = 2000
 NUM_BATCH_SAMPLES = 10
 root_path = os.getcwd()
-save_dir_prefix = "LVMfrac2_chk_"  # Updated prefix for Modified LV
+save_dir_prefix = "LVM_SINDyPI_chk_"  # Updated prefix for Modified LV
 model = MultiTargetMultiEquation_HSModel
 
 print(f"NUM_WARMUP = {NUM_WARMUP} , NUM_SAMPLES = {NUM_SAMPLES} , NUM_CHAINS = {NUM_CHAINS}")
@@ -97,7 +97,7 @@ if mode == "run":
              display_svi=True,
              mix_data=mix_data_LV_M,  # Pointing to the M-version
              gt_utils=gt_utils,
-             scaler="scale")
+             scaler=None)
 
 elif mode == "row_plot":
     # indices adapted for the 11-term library
