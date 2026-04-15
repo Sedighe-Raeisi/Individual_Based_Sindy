@@ -205,9 +205,9 @@ def gt_utils(real_params):
 
     # dx/dt = alpha*x*(1-x) - beta*xy/(1+hx)
     gt_coef_dx = {name: [0, 0] for name in coef_names}
-    gt_coef_dx["x"] = -1*get_stats(real_params['alpha_array'])
-    gt_coef_dx["(x*Y)/(1+h*x)"] = [-np.mean(real_params['beta_array']),
-                                   np.std(real_params['beta_array'])]  # NOTE: negative sign for consumption
+    gt_coef_dx["x"] = get_stats(-real_params['alpha_array'])
+    gt_coef_dx["(x*Y)/(1+h*x)"] = [np.mean(-real_params['beta_array']),
+                                   np.std(-real_params['beta_array'])]  # NOTE: negative sign for consumption
 
     # dy/dt = epsilon*beta*xy/(1+hx) - m*y - H*y^2
     gt_coef_dy = {name: [0, 0] for name in coef_names}
@@ -217,8 +217,8 @@ def gt_utils(real_params):
     gt_coef_dy["(x*Y)/(1+h*x)"] = [eb_mean, eb_std]
 
     # Mortonality terms in h(Y) = mY + h2 + h3... are *subtracted* in dy/dt
-    gt_coef_dy["Y (h2)"] = [-np.mean(real_params['m_array']), np.std(real_params['m_array'])]
-    gt_coef_dy["Y^2 (h3)"] = [-np.mean(real_params['H_array']), np.std(real_params['H_array'])]
+    gt_coef_dy["Y (h2)"] = [np.mean(-real_params['m_array']), np.std(-real_params['m_array'])]
+    gt_coef_dy["Y^2 (h3)"] = [np.mean(-real_params['H_array']), np.std(-real_params['H_array'])]
 
     # Combine into required list format
     gt_coef = [gt_coef_dx, gt_coef_dy]
@@ -229,7 +229,7 @@ def gt_utils(real_params):
         for name in coef_names:  # Must iterate in fixed order
             coef_list.append(eq_dict[name])
         eq_list.append(coef_list)
-
+    print(eq_list)
     gt_info_arr = np.array(eq_list)
     print(f"coef_names = {coef_names}")
     return {"eqs": eqs, "coef_names": coef_names, "gt_coef": gt_coef, "gt_info_arr": gt_info_arr}

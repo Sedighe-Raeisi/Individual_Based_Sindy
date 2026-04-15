@@ -390,7 +390,7 @@ def row_result(save_path, gt_utils, realparame2gtarray, true_params_file_str,
     plt.show()
     print("plot run finished")
 
-def plot_all_traj(save_path,gt_utils,realparame2gtarray, true_params_file_str, stop_subplot_n = None,width_scale = 4, hight_scale = 4):
+def plot_all_traj(save_path,gt_utils,realparame2gtarray, true_params_file_str, stop_subplot_n = None,width_scale = 4, hight_scale = 4, n_ind = None):
     """
 
     :param save_path:
@@ -414,7 +414,9 @@ def plot_all_traj(save_path,gt_utils,realparame2gtarray, true_params_file_str, s
         system_param_dict = pickle.load(f)
     noise_level = str(system_param_dict["noise_info"]["noise_level"]).split(".")[1]
     gt_coef_array = realparame2gtarray(true_params)
+    # print(f"true_params = {[v.shape for k, v in true_params.items()]}")
     gt_dict = gt_utils(true_params)
+    print(f"gt_dict = {gt_dict}")
     eqs = gt_dict['eqs']
     coef_names = gt_dict['coef_names']
     gt_coef = gt_dict['gt_coef']
@@ -435,8 +437,12 @@ def plot_all_traj(save_path,gt_utils,realparame2gtarray, true_params_file_str, s
             else:
                 axi = axes[ eq_i,coef_i]
             print(f'sub plot {coef_i} is created')
-            for traj_i in range(N_indv):
-                axi.scatter(X_data[traj_i,coef_i,:],Y_data[traj_i,eq_i,:], alpha=0.5, s=1)
+            if n_ind:
+                for traj_i in range(n_ind):
+                    axi.scatter(X_data[traj_i,coef_i,:],Y_data[traj_i,eq_i,:], alpha=0.5, s=1)
+            else:
+                for traj_i in range(N_indv):
+                    axi.scatter(X_data[traj_i,coef_i,:],Y_data[traj_i,eq_i,:], alpha=0.5, s=1)
 # Add titles and labels for clarity
             axi.set_title(f'Eq : {eqs[eq_i]}')
             axi.set_xlabel(f'Coef: {coef_names[coef_i]} ')
