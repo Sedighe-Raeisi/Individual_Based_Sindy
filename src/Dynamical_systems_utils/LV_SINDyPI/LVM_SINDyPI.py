@@ -252,7 +252,7 @@ def gt_utils(real_params):
     return {"eqs": eqs, "coef_names": coef_names, "gt_coef": gt_coef, "gt_info_arr": gt_info_arr}
 
 
-def realparame2gtarray(real_params: dict):
+def realparame2gtarray(real_params: dict,epsilon=0.001):
     """
     Revised mapping function to return the true coefficient arrays across parameter sets.
     Citations: Photo (names/library structure), LV_M class (logic)
@@ -261,8 +261,8 @@ def realparame2gtarray(real_params: dict):
     # Get any one parameter array to determine the size
     alpha_arr = real_params['alpha_array']
     N_sets = len(alpha_arr)
-    zeros = np.zeros(N_sets)
-    ones = np.ones(N_sets)
+    zeros = np.random.normal(0, epsilon, N_sets)
+    ones = np.random.normal(1, epsilon, N_sets)
 
     # 1. Map true arrays for dx/dt = alpha*x*(1-x) - beta*xy/(1+hx)
     # Names match gt_utils: ["H (const)", "g1", "g2", "g3", "h2", "h3", "f1", "f2", "f3", "h4", "h5"]
@@ -341,7 +341,7 @@ def generate_pdf(save_path, pdf_smaple_N=10000, epsilon=0.01):
     # Model: dx/dt = alpha * x(1-x) - (beta * x * y) / (1 + h * x)
     # Library Index: 0:const, 1:x, 2:x(1-x), 3:x^2(1-x), 4:y, 5:y^2, 6:xy, 7:xy/(1+hx), ...
 
-    noise_vec = lambda: np.random.normal(0, epsilon, pdf_smaple_N)
+    noise_vec = np.random.normal(0, epsilon, pdf_smaple_N)
 
     coef_0 = [
         noise_vec,  # 0. const
@@ -377,5 +377,6 @@ def generate_pdf(save_path, pdf_smaple_N=10000, epsilon=0.01):
     ]
 
     # Combine into (2, 11, pdf_sample_N)
+    # print([coef_0, coef_1])
     return np.array([coef_0, coef_1])
 
