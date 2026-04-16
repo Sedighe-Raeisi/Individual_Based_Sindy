@@ -33,5 +33,5 @@ plot_dict = {"legend":False, "est_color": "blue", "gt_color": "red", "flat_color
 Custom_plot(generate_pdf, pdf_state=True, ground_truth = True, HB_Est = True, FlatB_Est = False,TABLE = False,
             gt_utils=gt_utils, realparame2gtarray=realparame2gtarray, save_dir_prefix=save_dir_prefix,
            fighigth=5, figwidth=12, n_rows=2, n_cols=6,
-           scaler=None, to_plot=to_plot, plot_dict=plot_dict)
+           scaler="scale", to_plot=to_plot, plot_dict=plot_dict)
 
