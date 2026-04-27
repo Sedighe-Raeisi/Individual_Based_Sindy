@@ -176,8 +176,8 @@ def gt_utils(real_params):
 
     # Define the *general* form of equations as drawn
     eqs = [
-        "dx/dt = g(x)X - f(x)Y",
-        "dy/dt = epsilon*f(x)Y - mY - h(Y)"
+        "$\\dot{x} = αχ(1-χ) - β\\frac{xy}{1=hx}$",
+        "$\\dot{y} = -my-Hy^2+εβ\\frac{xy}{1=hx}$"
     ]
 
     # 1. List ALL potential term names identified from the photo
