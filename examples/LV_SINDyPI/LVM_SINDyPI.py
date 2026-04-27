@@ -75,8 +75,8 @@ system_param_dict = {
     "delta4_info": delta4_info,
 
     # Simulation and Initial Conditions
-    "x0_info": {"x0_V": 10},
-    "y0_info": {"y0_V": 10},
+    "x0_info": {"x0_V": .5},
+    "y0_info": {"y0_V": .8},
     "t_info": {"t_start": 0, "t_end": 20, "N_t": 1000},
     "noise_info": {"noise_level": 0.01}
 }
@@ -97,7 +97,7 @@ if mode == "run":
              display_svi=True,
              mix_data=mix_data_LV_M,  # Pointing to the M-version
              gt_utils=gt_utils,
-             scaler="scale")
+             scaler="z-score")
 
 elif mode == "row_plot":
     # indices adapted for the 11-term library
@@ -116,7 +116,7 @@ elif mode == "row_plot":
     row_result(save_path, gt_utils, realparame2gtarray, true_params_file_str,
                fighigth=4, figwidth=18,
                n_rows=2, n_cols=2,
-               scaler="scale", to_plot=to_plot, plot_dict=plot_dict)
+               scaler="z-score", to_plot=to_plot, plot_dict=plot_dict)
 
 elif mode == "plot":
     true_params_file_str = "chk_GT_Data.pkl"
@@ -126,4 +126,4 @@ elif mode == "plot":
 
     plt_mcmc(save_path, gt_utils, realparame2gtarray, generate_pdf, true_params_file_str,
              stop_subplot_n=None, figlength=3,
-             complex_pdf=True, x_range=None, scaler="scale")
+             complex_pdf=True, x_range=None, scaler="z-score")
