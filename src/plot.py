@@ -5,6 +5,7 @@ import seaborn as sns
 import numpy as np
 import os
 import matplotlib as mpl
+from src.mcmc_utils import BH_scaler
 import numpyro
 
 def plt_mcmc(save_path,gt_utils,realparame2gtarray, generate_pdf, true_params_file_str,
@@ -451,4 +452,67 @@ def plot_all_traj(save_path,gt_utils,realparame2gtarray, true_params_file_str, s
     # Adjust layout to prevent overlapping titles/labels
     plt.tight_layout()
     plt.savefig(os.path.join(save_path,f"all_traj_plot_noise{noise_level}.jpg"))
+    plt.show()
+
+def feature_plot(save_path,gt_utils,realparame2gtarray, true_params_file_str, stop_subplot_n = None,width_scale = 4, hight_scale = 4, n_ind = None,scaler=None):
+    """
+
+    :param save_path:
+    :param gt_utils:
+    :param realparame2gtarray: converts a dic of gt to array of gt
+    :param generate_pdf: the function that is used to generate the arrays of pdf distributions
+    :param true_params_file_str: the name of the file that contains true values or ground truth values
+    :param stop_subplot_n: if we want to have a few number of relevent sub-plot in figure
+    :param width_scale: scale of the plot for width which is used in fig_size
+    :param hight_scale: scale of the plot for hight which is used in fig_size
+    :param complex_pdf: if we have coef which is computed from some basic coef of the system like k/m
+    :param x_range: list of the form [x_min,y_max]
+    :return:
+    """
+    true_params_filename = os.path.join(save_path, true_params_file_str)
+    with open(true_params_filename, 'rb') as f:
+        X_data, Y_data, true_params = pickle.load(f)
+
+    system_param_dict_path = os.path.join(save_path, "system_param_dict.pkl")
+    with open(system_param_dict_path, "rb") as f:
+        system_param_dict = pickle.load(f)
+    noise_level = str(system_param_dict["noise_info"]["noise_level"]).split(".")[1]
+
+    gt_dict = gt_utils(true_params)
+    print(f"gt_dict = {gt_dict}")
+    eqs = gt_dict['eqs']
+    coef_names = gt_dict['coef_names']
+
+    N_Eqs = Y_data.shape[1]
+    N_Coef = X_data.shape[1]
+    N_indv = X_data.shape[0]
+    n_plot_cols = stop_subplot_n if stop_subplot_n else N_Coef
+    fig, axes = plt.subplots(N_Eqs, n_plot_cols,
+                             figsize=(width_scale * n_plot_cols, hight_scale * N_Eqs))  # 2 rows, 3 columns
+    t = range(0,X_data.shape[2])
+    if scaler is not None:
+        scaler = BH_scaler(X_data)
+        X_data = scaler.scale(X_data)
+    for eq_i in range(N_Eqs):
+
+        for coef_i in range(n_plot_cols):  # Loop over coefficients
+            if N_Eqs == 1:
+                axi = axes[coef_i]
+            else:
+                axi = axes[ eq_i,coef_i]
+            print(f'sub plot {coef_i} is created')
+            if n_ind:
+                for traj_i in range(n_ind):
+                    axi.scatter(t,X_data[traj_i,coef_i,:], alpha=0.5, s=1)
+            else:
+                for traj_i in range(N_indv):
+                    axi.scatter(t,X_data[traj_i,coef_i,:], alpha=0.5, s=1)
+# Add titles and labels for clarity
+            axi.set_title(f'Eq : {eqs[eq_i]}')
+            axi.set_ylabel(f'Coef: {coef_names[coef_i]} ')
+            axi.set_xlabel("t")
+
+    # Adjust layout to prevent overlapping titles/labels
+    plt.tight_layout()
+    plt.savefig(os.path.join(save_path,f"feature_analysis_plot_{noise_level}.svg"))
     plt.show()
