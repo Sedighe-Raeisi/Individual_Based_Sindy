@@ -24,8 +24,8 @@ def compare_model(hb_save_dir_prefix,scaler = None):
     with open(os.path.join(folder_path_hb, "chk_GT_Data.pkl"), 'rb') as f:
         X_data, Y_data, true_params = pickle.load(f)
         if scaler is not None:
-            scaler = BH_scaler(X_data)
-            X_data = scaler.scale(X_data)
+            scaling_type = scaler
+            scaler = BH_scaler(X_data, scaling_type=scaling_type)
     with open(os.path.join(folder_path_hb, "mcmc_module.pkl"), "rb") as f:
         hb_loaded_mcmc = pickle.load(f)
     dims_hb = {"obs": ["id", "target", "time"]}

@@ -173,67 +173,67 @@ def run_mcmc(system_param_dict ,
         print("----------------------- MCMC continue batch Finished -----------------------")
         mcmc_result(mcmc_coef_results, eq_list, coef_names, gt_coef)
 #######################################################################################################################################################
-class BH_scaler:
-
-    def __init__(self, X_data):
-        self.X_data = X_data
-        self.mean = None
-        self.std = None
-
-    def scale(self, X):
-      """Scales the non-constant terms of the input data."""
-      to_scale_X = X[:, 1:, :] # Exclude the constant term
-      # Calculate mean and std across observations for each individual and feature
-      # This is the change you proposed:
-      self.mean = np.mean(to_scale_X, axis=2, keepdims=True)
-      self.std = np.std(to_scale_X, axis=2, keepdims=True)
-      scaled_X = (to_scale_X - self.mean) / self.std
-
-      # Reconstruct the scaled data with the constant term
-      n_IDs = X.shape[0]
-      n_obs = X.shape[2]
-      Theta_constant_term = np.ones((n_IDs, 1, n_obs))
-      scaled_X = np.concatenate((Theta_constant_term, scaled_X), axis=1)
-
-      return scaled_X
-
-    # ... (rest of the class remains the same, but you would need to adjust the reverse_coef methods)
-    def reverse_coef(self, coef_arr, method='mcmc'):
-        # ... (mcmc logic)
-        if method == 'mcmc':
-            # mcmc output shape: (n_samples, n_indv, n_coef, n_eq)
-            # n_samples, n_IDs, n_coef, n_eq = coef_arr.shape
-            # but for stationary samples
-            const_coef = coef_arr[:, :, 0, :]
-            nonConst_coef = coef_arr[:, :, 1:, :]
-            # Reshape mean and std for broadcasting across samples and equations
-            # The new mean and std have shape (n_indv, n_coef - 1, 1)
-            mean_reshaped = np.squeeze(self.mean, axis=2)[np.newaxis, :, :,
-                            np.newaxis]  # Shape becomes (1, n_indv, n_coef - 1, 1)
-            std_reshaped = np.squeeze(self.std, axis=2)[np.newaxis, :, :,
-                           np.newaxis]  # Shape becomes (1, n_indv, n_coef - 1, 1)
-
-            original_nonConst = nonConst_coef / std_reshaped
-            original_const = const_coef - np.sum(original_nonConst * mean_reshaped, axis=2)
-
-            original_coef = np.concatenate((np.expand_dims(original_const, axis=2), original_nonConst), axis=2)
-            return original_coef
-
-        elif method == 'svi':
-            # svi output shape: (n_indv, n_coef, n_eq)
-            n_IDs, n_coef, n_eq = coef_arr.shape
-            const_coef = coef_arr[:, 0, :]
-            nonConst_coef = coef_arr[:, 1:, :]
-            # Reshape mean and std for broadcasting across equations
-            # The new mean and std have shape (n_indv, n_coef - 1, 1)
-            mean_reshaped = np.squeeze(self.mean, axis=2)[:, :, np.newaxis]  # Shape becomes (n_indv, n_coef - 1, 1)
-            std_reshaped = np.squeeze(self.std, axis=2)[:, :, np.newaxis]  # Shape becomes (n_indv, n_coef - 1, 1)
-
-            original_nonConst = nonConst_coef / std_reshaped
-            original_const = const_coef - np.sum(original_nonConst * mean_reshaped, axis=1)
-
-            original_coef = np.concatenate((np.expand_dims(original_const, axis=1), original_nonConst), axis=1)
-            return original_coef
+# class BH_scaler:
+#
+#     def __init__(self, X_data):
+#         self.X_data = X_data
+#         self.mean = None
+#         self.std = None
+#
+#     def scale(self, X):
+#       """Scales the non-constant terms of the input data."""
+#       to_scale_X = X[:, 1:, :] # Exclude the constant term
+#       # Calculate mean and std across observations for each individual and feature
+#       # This is the change you proposed:
+#       self.mean = np.mean(to_scale_X, axis=2, keepdims=True)
+#       self.std = np.std(to_scale_X, axis=2, keepdims=True)
+#       scaled_X = (to_scale_X - self.mean) / self.std
+#
+#       # Reconstruct the scaled data with the constant term
+#       n_IDs = X.shape[0]
+#       n_obs = X.shape[2]
+#       Theta_constant_term = np.ones((n_IDs, 1, n_obs))
+#       scaled_X = np.concatenate((Theta_constant_term, scaled_X), axis=1)
+#
+#       return scaled_X
+#
+#     # ... (rest of the class remains the same, but you would need to adjust the reverse_coef methods)
+#     def reverse_coef(self, coef_arr, method='mcmc'):
+#         # ... (mcmc logic)
+#         if method == 'mcmc':
+#             # mcmc output shape: (n_samples, n_indv, n_coef, n_eq)
+#             # n_samples, n_IDs, n_coef, n_eq = coef_arr.shape
+#             # but for stationary samples
+#             const_coef = coef_arr[:, :, 0, :]
+#             nonConst_coef = coef_arr[:, :, 1:, :]
+#             # Reshape mean and std for broadcasting across samples and equations
+#             # The new mean and std have shape (n_indv, n_coef - 1, 1)
+#             mean_reshaped = np.squeeze(self.mean, axis=2)[np.newaxis, :, :,
+#                             np.newaxis]  # Shape becomes (1, n_indv, n_coef - 1, 1)
+#             std_reshaped = np.squeeze(self.std, axis=2)[np.newaxis, :, :,
+#                            np.newaxis]  # Shape becomes (1, n_indv, n_coef - 1, 1)
+#
+#             original_nonConst = nonConst_coef / std_reshaped
+#             original_const = const_coef - np.sum(original_nonConst * mean_reshaped, axis=2)
+#
+#             original_coef = np.concatenate((np.expand_dims(original_const, axis=2), original_nonConst), axis=2)
+#             return original_coef
+#
+#         elif method == 'svi':
+#             # svi output shape: (n_indv, n_coef, n_eq)
+#             n_IDs, n_coef, n_eq = coef_arr.shape
+#             const_coef = coef_arr[:, 0, :]
+#             nonConst_coef = coef_arr[:, 1:, :]
+#             # Reshape mean and std for broadcasting across equations
+#             # The new mean and std have shape (n_indv, n_coef - 1, 1)
+#             mean_reshaped = np.squeeze(self.mean, axis=2)[:, :, np.newaxis]  # Shape becomes (n_indv, n_coef - 1, 1)
+#             std_reshaped = np.squeeze(self.std, axis=2)[:, :, np.newaxis]  # Shape becomes (n_indv, n_coef - 1, 1)
+#
+#             original_nonConst = nonConst_coef / std_reshaped
+#             original_const = const_coef - np.sum(original_nonConst * mean_reshaped, axis=1)
+#
+#             original_coef = np.concatenate((np.expand_dims(original_const, axis=1), original_nonConst), axis=1)
+#             return original_coef
 
 def mcmc_result(reverted_coef,eqs,coef_names,gt_coef):
     # Assuming 'reverted_coef' from the MCMC run is available
@@ -269,3 +269,82 @@ def mcmc_result(reverted_coef,eqs,coef_names,gt_coef):
             print(f"MCMC Est mean = {est_mean:.4f} , MCMC Est std = {est_std:.4f} ")
             print(
                 f"GT mean = {gt_coef[eq_j][coef_names[coef_i]][0]:.4f} , GT std = {gt_coef[eq_j][coef_names[coef_i]][1]:.4f}")
+
+
+#########################  NEW SCALER - WITH MIN-MAX ###########################
+
+import numpy as np
+
+
+class BH_scaler:
+    def __init__(self, X_data, scaling_type='z-score'):
+        """
+        scaling_type: 'z-score' (Standardization) or 'min-max'
+        """
+        self.X_data = X_data
+        self.scaling_type = scaling_type
+        # Generalized parameters to hold either (mean, std) or (min, range)
+        self.param1 = None  # Mean or Min
+        self.param2 = None  # Std or Range (max - min)
+
+    def scale(self, X):
+        """Scales the non-constant terms of the input data."""
+        to_scale_X = X[:, 1:, :]  # Exclude the constant term
+
+        if self.scaling_type == 'z-score':
+            self.param1 = np.mean(to_scale_X, axis=2, keepdims=True)
+            self.param2 = np.std(to_scale_X, axis=2, keepdims=True)
+            # Handle potential division by zero
+            self.param2[self.param2 == 0] = 1.0
+
+        elif self.scaling_type == 'min-max':
+            self.param1 = np.min(to_scale_X, axis=2, keepdims=True)
+            max_val = np.max(to_scale_X, axis=2, keepdims=True)
+            self.param2 = max_val - self.param1
+            # Handle potential division by zero (constant features)
+            self.param2[self.param2 == 0] = 1.0
+
+        scaled_X = (to_scale_X - self.param1) / self.param2
+
+        # Reconstruct the scaled data with the constant term
+        n_IDs = X.shape[0]
+        n_obs = X.shape[2]
+        Theta_constant_term = np.ones((n_IDs, 1, n_obs))
+        scaled_X = np.concatenate((Theta_constant_term, scaled_X), axis=1)
+
+        return scaled_X
+
+    def reverse_coef(self, coef_arr, method='mcmc'):
+        """
+        Reverse scaling of coefficients.
+        Works for both z-score and min-max by using param1 and param2.
+        """
+        if method == 'mcmc':
+            # shape: (n_samples, n_indv, n_coef, n_eq)
+            const_coef = coef_arr[:, :, 0, :]
+            nonConst_coef = coef_arr[:, :, 1:, :]
+
+            p1_reshaped = np.squeeze(self.param1, axis=2)[np.newaxis, :, :, np.newaxis]
+            p2_reshaped = np.squeeze(self.param2, axis=2)[np.newaxis, :, :, np.newaxis]
+
+            # a = a' / sigma (or range)
+            original_nonConst = nonConst_coef / p2_reshaped
+            # c = c' - sum(a * mu)
+            original_const = const_coef - np.sum(original_nonConst * p1_reshaped, axis=2)
+
+            original_coef = np.concatenate((np.expand_dims(original_const, axis=2), original_nonConst), axis=2)
+            return original_coef
+
+        elif method == 'svi':
+            # shape: (n_indv, n_coef, n_eq)
+            const_coef = coef_arr[:, 0, :]
+            nonConst_coef = coef_arr[:, 1:, :]
+
+            p1_reshaped = np.squeeze(self.param1, axis=2)[:, :, np.newaxis]
+            p2_reshaped = np.squeeze(self.param2, axis=2)[:, :, np.newaxis]
+
+            original_nonConst = nonConst_coef / p2_reshaped
+            original_const = const_coef - np.sum(original_nonConst * p1_reshaped, axis=1)
+
+            original_coef = np.concatenate((np.expand_dims(original_const, axis=1), original_nonConst), axis=1)
+            return original_coef

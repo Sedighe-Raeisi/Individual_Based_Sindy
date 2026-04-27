@@ -491,7 +491,8 @@ def feature_plot(save_path,gt_utils,realparame2gtarray, true_params_file_str, st
                              figsize=(width_scale * n_plot_cols, hight_scale * N_Eqs))  # 2 rows, 3 columns
     t = range(0,X_data.shape[2])
     if scaler is not None:
-        scaler = BH_scaler(X_data)
+        scaling_type = scaler
+        scaler = BH_scaler(X_data,scaling_type=scaling_type)
         X_data = scaler.scale(X_data)
     for eq_i in range(N_Eqs):
 
