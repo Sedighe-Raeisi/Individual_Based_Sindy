@@ -56,7 +56,7 @@ def run_mcmc(system_param_dict ,
         print("True parameters keys:", true_params.keys())
         ############################## if we need scaling #########################
         if scaler is not None:
-            scaler = BH_scaler(X_data)
+            scaler = BH_scaler(X_data,scaling_type=scaler)
             X_data = scaler.scale(X_data)
 
 
@@ -131,7 +131,7 @@ def run_mcmc(system_param_dict ,
         pickled_mcmc.post_warmup_state = pickled_mcmc.last_state
 
         if scaler is not None:
-            scaler = BH_scaler(X_data)
+            scaler = BH_scaler(X_data, scaling_type=scaler)
             X_data = scaler.scale(X_data)
 
         pickled_mcmc.run(jax.random.PRNGKey(1), X_data, Y_data)

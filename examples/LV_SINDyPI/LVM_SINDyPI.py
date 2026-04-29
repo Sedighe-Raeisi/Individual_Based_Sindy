@@ -76,7 +76,7 @@ system_param_dict = {
 
     # Simulation and Initial Conditions
     "x0_info": {"x0_V": .5},
-    "y0_info": {"y0_V": .8},
+    "y0_info": {"y0_V": .2},
     "t_info": {"t_start": 0, "t_end": 20, "N_t": 1000},
     "noise_info": {"noise_level": 0.01}
 }
@@ -97,7 +97,7 @@ if mode == "run":
              display_svi=True,
              mix_data=mix_data_LV_M,  # Pointing to the M-version
              gt_utils=gt_utils,
-             scaler="z-score")
+             scaler="min-max")
 
 elif mode == "row_plot":
     # indices adapted for the 11-term library
