@@ -52,7 +52,7 @@ if mode == "run":
                  NUM_WARMUP=NUM_WARMUP, NUM_CHAINS=NUM_CHAINS, NUM_SAMPLES=NUM_SAMPLES, NUM_BATCH_SAMPLES=NUM_BATCH_SAMPLES,
                  root_path = root_path, save_dir_prefix = save_dir_prefix,
                  program_state = "start", model = model,
-                 display_svi = True, mix_data = mix_data, gt_utils = gt_utils,scaler="scale")
+                 display_svi = True, mix_data = mix_data, gt_utils = gt_utils,scaler="z-score")
                  
     print("**************** Evaluation of model based on LOO metric for overfit *******************")
     hb_save_dir_prefix = "LV_chk_"

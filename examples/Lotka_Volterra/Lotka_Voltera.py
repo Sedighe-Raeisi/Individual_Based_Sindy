@@ -49,7 +49,7 @@ if mode == "run":
                  NUM_WARMUP=NUM_WARMUP, NUM_CHAINS=NUM_CHAINS, NUM_SAMPLES=NUM_SAMPLES, NUM_BATCH_SAMPLES=NUM_BATCH_SAMPLES,
                  root_path = root_path, save_dir_prefix = save_dir_prefix,
                  program_state = "start", model = model,
-                 display_svi = True, mix_data = mix_data_lotka_volterra, gt_utils = gt_utils,scaler="scale")
+                 display_svi = True, mix_data = mix_data_lotka_volterra, gt_utils = gt_utils,scaler="z-score")
 elif mode == "row_plot":
     to_plot = [[0,1],[0,3],[1,2],[1,3]]
 
