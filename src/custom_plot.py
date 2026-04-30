@@ -263,7 +263,8 @@ def Custom_plot(generate_pdf, ground_truth = True, HB_Est = True, FlatB_Est = Tr
         if xlabel_list:
             axi.set_xlabel(xlabel_list[plot_i], fontsize=xlabel_fontsize)#, fontdict={'family': 'Times New Roman'})
             if xlim:
-                axi.set_xlim(xlim[plot_i][0], xlim[plot_i][1])
+                # axi.set_xlim(xlim[plot_i][0], xlim[plot_i][1])
+                axi.set_xlim(xlim[0], xlim[1])
             plot_i+=1
         else:
             axi.set_xlabel(f"{eqs[index[0]].split('=')[0]}\n{coef_names[index[1]]}", fontsize=xlabel_fontsize)#, fontdict={'family': 'Times New Roman'})
