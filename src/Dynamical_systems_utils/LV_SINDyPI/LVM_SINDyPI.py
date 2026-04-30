@@ -96,8 +96,8 @@ def mix_data_LV_M(system_param_dict):
     N_t = t_info.get('N_t', 1000)
     dt = (t_end - t_start) / N_t
 
-    x0 = system_param_dict.get('x0_info', {}).get('x0_V', 10)
-    y0 = system_param_dict.get('y0_info', {}).get('y0_V', 10)
+    x0 = system_param_dict.get('x0_info', {}).get('x0_V', 0.5)
+    y0 = system_param_dict.get('y0_info', {}).get('y0_V', 0.2)
 
     # --- Storage ---
     X_all = []
@@ -141,7 +141,7 @@ def mix_data_LV_M(system_param_dict):
             np.ones_like(x),  # 0. H (const)
             x,  # x
             x**2,  # -x**2
-            x ** 3,
+            x**3,
             dxdt,
             dxdt*x,
             y,  # 4. Y (h2)
@@ -226,7 +226,7 @@ def gt_utils(real_params):
 
     gt_coef_dy["y**2"] = [np.mean(real_params["H_array"]), np.std(real_params["H_array"])]
 
-    coef_xy = real_params["m_array"]*real_params["h_array"]-real_params["epsilon_array"]*real_params["beta_array"]
+    coef_xy = (real_params["m_array"]*real_params["h_array"])-(real_params["epsilon_array"]*real_params["beta_array"])
     gt_coef_dy["x*y"] = [np.mean(coef_xy),np.std(coef_xy)]
 
     coef_xy2 = real_params["H_array"]*real_params["h_array"]
@@ -270,7 +270,7 @@ def realparame2gtarray(real_params: dict,epsilon=0.001):
         zeros,  # 0. const
         -real_params['alpha_array'],  # 1. x
         -real_params['alpha_array']*(real_params["h_array"]-1),  # 2. x**2
-        real_params["alpha_array"]*real_params["h_array"],  # 3. h**3)
+        real_params["alpha_array"]*real_params["h_array"],  # 3. x**3
         ones,  # 4. x_dot
         real_params["h_array"],  # 5. x_dot*x
         zeros,  # 6. y
@@ -289,12 +289,12 @@ def realparame2gtarray(real_params: dict,epsilon=0.001):
         zeros,  # 0. const
         zeros,  # 1. x
         zeros,  # 2. x**2
-        zeros,  # 3. h**3)
+        zeros,  # 3. x**3
         zeros,  # 4. x_dot
         zeros,  # 5. x_dot*x
         real_params["m_array"],  # 6. y
         real_params["H_array"],  # 7. y**2
-        real_params["m_array"]*real_params["h_array"]-eb_arr,  # 8. x*y
+        (real_params["m_array"]*real_params["h_array"])-eb_arr,  # 8. x*y
         real_params["H_array"]*real_params["h_array"],  # 9. x*y**2
         ones,  # 10 y_dot
         real_params["h_array"],  # 11. x*y_dot
