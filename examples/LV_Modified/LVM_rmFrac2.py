@@ -97,7 +97,7 @@ if mode == "run":
              display_svi=True,
              mix_data=mix_data_LV_M,  # Pointing to the M-version
              gt_utils=gt_utils,
-             scaler="min-max")
+             scaler="z-score")
 
 elif mode == "row_plot":
     # indices adapted for the 11-term library
