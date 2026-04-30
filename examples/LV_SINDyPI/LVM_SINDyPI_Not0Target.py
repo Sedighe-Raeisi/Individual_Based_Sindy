@@ -29,7 +29,7 @@ NUM_CHAINS = 3
 NUM_SAMPLES = 2000
 NUM_BATCH_SAMPLES = 10
 root_path = os.getcwd()
-save_dir_prefix = "LVM_SINDyPI_chk_"  # Updated prefix for Modified LV
+save_dir_prefix = "LVM_SINDyPI2_chk_"  # Updated prefix for Modified LV
 model = MultiTargetMultiEquation_HSModel
 
 print(f"NUM_WARMUP = {NUM_WARMUP} , NUM_SAMPLES = {NUM_SAMPLES} , NUM_CHAINS = {NUM_CHAINS}")
