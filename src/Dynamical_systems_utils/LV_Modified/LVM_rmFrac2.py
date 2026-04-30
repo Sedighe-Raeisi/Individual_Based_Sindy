@@ -96,8 +96,8 @@ def mix_data_LV_M(system_param_dict):
     N_t = t_info.get('N_t', 1000)
     dt = (t_end - t_start) / N_t
 
-    x0 = system_param_dict.get('x0_info', {}).get('x0_V', 10)
-    y0 = system_param_dict.get('y0_info', {}).get('y0_V', 10)
+    x0 = system_param_dict.get('x0_info', {}).get('x0_V', 0.5)
+    y0 = system_param_dict.get('y0_info', {}).get('y0_V', 0.2)
 
     # --- Storage ---
     X_all = []
