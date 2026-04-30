@@ -46,12 +46,12 @@ def mk_info(mean, std, N=5):
 N_param_set = 100
 
 # Standard & Modified LV Parameters
-alpha_info = {"alpha_N": None, "alpha_mean": 1.0, "alpha_std": 0.05, "alpha_V": None}
-beta_info = {"beta_N": None, "beta_mean": 1.7, "beta_std": 0.01, "beta_V": None}
+alpha_info = {"alpha_N": None, "alpha_mean": 1.0, "alpha_std": 0.09, "alpha_V": None}
+beta_info = {"beta_N": None, "beta_mean": 1.7, "beta_std": 0.08, "beta_V": None}
 
-h_info = {"h_N": None, "h_mean": None, "h_std": None, "h_V": 0.4}
+h_info = {"h_N": None, "h_mean": 0.4, "h_std": 0.1, "h_V": None}
 epsilon_info = {"epsilon_N": None, "epsilon_mean": None, "epsilon_std": None, "epsilon_V": 0.1}
-m_info = {"m_N": None, "m_mean": 0.4, "m_std": 0.01, "m_V": None}
+m_info = {"m_N": None, "m_mean": 0.4, "m_std": 0.07, "m_V": None}
 H_info = {"H_N": None, "H_mean": 0.075, "H_std": 0.025, "H_V": None}
 
 # Placeholder Deltas (Required for the 11-term library)
