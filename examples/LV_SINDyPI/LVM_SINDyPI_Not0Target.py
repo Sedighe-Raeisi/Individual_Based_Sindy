@@ -48,12 +48,12 @@ N_param_set = 100
 
 # Standard & Modified LV Parameters
 alpha_info = {"alpha_N": None, "alpha_mean": 1.0, "alpha_std": 0.09, "alpha_V": None}
-beta_info = {"beta_N": None, "beta_mean": 1.7, "beta_std": 0.08, "beta_V": None}
+beta_info = {"beta_N": None, "beta_mean": 3.0, "beta_std": 0.02, "beta_V": None}
 
-h_info = {"h_N": None, "h_mean": 0.4, "h_std": 0.1, "h_V": None}
-epsilon_info = {"epsilon_N": None, "epsilon_mean": None, "epsilon_std": None, "epsilon_V": 0.1}
-m_info = {"m_N": None, "m_mean": 0.4, "m_std": 0.07, "m_V": None}
-H_info = {"H_N": None, "H_mean": 0.075, "H_std": 0.025, "H_V": None}
+h_info = {"h_N": None, "h_mean": 1.5, "h_std": 0.01, "h_V": None}
+epsilon_info = {"epsilon_N": None, "epsilon_mean": None, "epsilon_std": None, "epsilon_V": 0.5}
+m_info = {"m_N": None, "m_mean": 0.1, "m_std": 0.01, "m_V": None}
+H_info = {"H_N": None, "H_mean": None, "H_std": None, "H_V": 0.001}
 
 # Placeholder Deltas (Required for the 11-term library)
 delta1_info = {"delta1_N": None, "delta1_mean": None, "delta1_std": None, "delta1_V": 0.0}
@@ -78,7 +78,7 @@ system_param_dict = {
     # Simulation and Initial Conditions
     "x0_info": {"x0_V": .5},
     "y0_info": {"y0_V": .2},
-    "t_info": {"t_start": 0, "t_end": 20, "N_t": 1000},
+    "t_info": {"t_start": 0, "t_end": 200, "N_t": 1000},
     "noise_info": {"noise_level": 0.01}
 }
 mode = "run"
@@ -98,7 +98,7 @@ if mode == "run":
              display_svi=True,
              mix_data=mix_data_LV_M,  # Pointing to the M-version
              gt_utils=gt_utils,
-             scaler="min-max")
+             scaler="z-score")
 
 elif mode == "row_plot":
     # indices adapted for the 11-term library
