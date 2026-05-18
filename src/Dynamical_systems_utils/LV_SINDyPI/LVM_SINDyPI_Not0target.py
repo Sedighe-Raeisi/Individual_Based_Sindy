@@ -163,6 +163,17 @@ def mix_data_LV_M(system_param_dict):
     # Store collected parameter arrays for real_params
     p_arrays = {f'{p}_array': np.array(p_lists[p]) for p in param_keys}
 
+    # # Loop through your individuals (using 4 as in your example)
+    # for i in range(1):
+    #     # Slice shape: (10, 1000) -> 10 features, 1000 observations
+    #     indv_data = X_all[i, :, :]
+    #
+    #     # We remove rowvar=False because features are already the rows
+    #     corr_matrix = np.corrcoef(indv_data)
+    #
+    #     print(f"Individual {i} Correlation Matrix Shape: {corr_matrix.shape}")
+    #     print(corr_matrix)
+    #     print("-" * 30)
     return X_all, Y_all, p_arrays
 
 
