@@ -65,6 +65,98 @@ class LV_M:
 
 
 # --- End of provided class ---
+# def mix_data(system_param_dict):
+#     N_param_set = system_param_dict['N_param_set']
+#     alpha_V = system_param_dict['alpha_info']['alpha_V'] if 'alpha_V' in system_param_dict['alpha_info'] else None
+#     alpha_mean = system_param_dict['alpha_info']['alpha_mean'] if 'alpha_mean' in system_param_dict['alpha_info'] else None
+#     alpha_std = system_param_dict['alpha_info']['alpha_std'] if 'alpha_std' in system_param_dict['alpha_info'] else None
+#     alpha_N = system_param_dict['alpha_info']['alpha_N'] if 'alpha_N' in system_param_dict['alpha_info'] else None
+#
+#     beta_V = system_param_dict['beta_info']['beta_V'] if 'beta_V' in system_param_dict['beta_info'] else None
+#     beta_mean = system_param_dict['beta_info']['beta_mean'] if 'beta_mean' in system_param_dict['beta_info'] else None
+#     beta_std = system_param_dict['beta_info']['beta_std'] if 'beta_std' in system_param_dict['beta_info'] else None
+#     beta_N = system_param_dict['beta_info']['beta_N'] if 'beta_N' in system_param_dict['beta_info'] else None
+#
+#     # gamma_V = system_param_dict['gamma_info']['gamma_V'] if 'gamma_V' in system_param_dict['gamma_info'] else None
+#     # gamma_mean = system_param_dict['gamma_info']['gamma_mean'] if 'gamma_mean' in system_param_dict['gamma_info'] else None
+#     # gamma_std = system_param_dict['gamma_info']['gamma_std'] if 'gamma_std' in system_param_dict['gamma_info'] else None
+#     # gamma_N = system_param_dict['gamma_info']['gamma_N'] if 'gamma_N' in system_param_dict['gamma_info'] else None
+#
+#     delta_V = system_param_dict['delta_info']['delta_V'] if 'delta_V' in system_param_dict['delta_info'] else None
+#     delta_mean = system_param_dict['delta_info']['delta_mean'] if 'delta_mean' in system_param_dict['delta_info'] else None
+#     delta_std = system_param_dict['delta_info']['delta_std'] if 'delta_std' in system_param_dict['delta_info'] else None
+#     delta_N = system_param_dict['delta_info']['delta_N'] if 'delta_N' in system_param_dict['delta_info'] else None
+#
+#     t_start = system_param_dict['t_info']['t_start'] if 't_start' in system_param_dict['t_info'] else 0
+#     t_end = system_param_dict['t_info']['t_end'] if 't_end' in system_param_dict['t_info'] else 20
+#     dt = system_param_dict['t_info']['dt'] if 'dt' in system_param_dict['t_info'] else 0.01
+#     noise_level = system_param_dict['noise_info']["noise_level"] if "noise_level" in list(
+#         system_param_dict["noise_info"].keys()) else 0.01
+#     x0_V = system_param_dict['x0_info']['x0_V'] if 'x0_V' in system_param_dict['x0_info'] else 10
+#     y0_V = system_param_dict['y0_info']['y0_V'] if 'y0_V' in system_param_dict['y0_info'] else 10
+#
+#
+#     X_all = []
+#     Y_all = []
+#
+#     alpha_list = []
+#     beta_list = []
+#     gamma_list = []
+#     delta_list = []
+#
+#     alpha_gen = gen_param(N_param_set,alpha_V, alpha_mean, alpha_std)
+#     beta_gen = gen_param(N_param_set, beta_V, beta_mean, beta_std)
+#     gamma_gen = gen_param(N_param_set, gamma_V, gamma_mean, gamma_std)
+#     delta_gen = gen_param(N_param_set, delta_V, delta_mean, delta_std)
+#
+#     for param_set in range(N_param_set):
+#         alpha = math.fabs(alpha_gen.gen())
+#         beta = math.fabs(beta_gen.gen())
+#         gamma = math.fabs(gamma_gen.gen())
+#         delta = math.fabs(delta_gen.gen())
+#
+#         alpha_list.append(alpha)
+#         beta_list.append(-beta)
+#         gamma_list.append(-gamma)
+#         delta_list.append(delta)
+#
+#
+#         oscillator = LotkaVolterra(alpha=alpha, beta=beta, gamma=gamma, delta=delta, x0=x0_V if x0_V is not None else 10.0, y0=y0_V if y0_V is not None else 10.0)
+#         results = oscillator.simulate(t_span=(t_start, t_end), dt=dt, noise_level=noise_level)
+#
+#         t = results['t']
+#         x = results['x']
+#         y = results['y']
+#         dx_dt = results['dx_dt']
+#         dy_dt = results['dy_dt']
+#
+#         # X contains [x, y, x*y] for SINDy-like regression for Lotka-Volterra
+#         X = np.array([np.ones_like(x), x, y, x * y, x**2, y**2])
+#         Y = np.array([dx_dt, dy_dt])
+#
+#         X_all.append(X)
+#         Y_all.append(Y)
+#
+#     X_all = np.array(X_all)
+#     Y_all = np.array(Y_all)
+#
+#     real_params = {
+#         'alpha_mean': np.mean(np.array(alpha_list)),
+#         'alpha_std': np.std(np.array(alpha_list)),
+#         'beta_mean': np.mean(np.array(beta_list)),
+#         'beta_std': np.std(np.array(beta_list)),
+#         'gamma_mean': np.mean(np.array(gamma_list)),
+#         'gamma_std': np.std(np.array(gamma_list)),
+#         'delta_mean': np.mean(np.array(delta_list)),
+#         'delta_std': np.std(np.array(delta_list)),
+#
+#         'alpha_array': np.array(alpha_list),
+#         'beta_array': np.array(beta_list),
+#         'gamma_array': np.array(gamma_list),
+#         'delta_array': np.array(delta_list),
+#     }
+#
+#     return X_all, Y_all, real_params
 
 
 def mix_data_LV_M(system_param_dict):
@@ -93,7 +185,7 @@ def mix_data_LV_M(system_param_dict):
     t_info = system_param_dict.get('t_info', {})
     t_start = t_info.get('t_start', 0)
     t_end = t_info.get('t_end', 20)
-    N_t = t_info.get('N_t', 1000)
+    N_t = t_info.get('N_t', 2000)
     dt = (t_end - t_start) / N_t
 
     x0 = system_param_dict.get('x0_info', {}).get('x0_V', 0.5)
